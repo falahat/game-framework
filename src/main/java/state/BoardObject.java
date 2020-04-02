@@ -1,5 +1,5 @@
 package state;
 
-public class BoardObject {
-
+public interface BoardObject {
+    boolean isBlocking();
 }
