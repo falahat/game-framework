@@ -1,6 +1,6 @@
 package state.graph;
 
-import model.Node;
+import model.node.Node;
 import state.BoardObject;
 import state.Point2D;
 

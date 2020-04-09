@@ -1,7 +1,7 @@
 package state;
 
 import model.AdjacencyListGraph;
-import model.Graph;
+import model.graph.Graph;
 import state.graph.BoardTile;
 import state.graph.TileEdge;
 

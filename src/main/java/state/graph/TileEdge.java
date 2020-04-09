@@ -1,6 +1,6 @@
 package state.graph;
 
-import model.Edge;
+import model.edge.Edge;
 import state.Direction;
 
 public class TileEdge implements Edge<BoardTile> {
