@@ -3,14 +3,13 @@ package state;
 import model.AdjacencyListGraph;
 import model.graph.Graph;
 import state.graph.BoardTile;
-import state.graph.TileEdge;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class Board implements GameState<Board> {
-    private Graph<BoardTile, TileEdge> tileGraph;
+    private Graph tileGraph;
     private Map<Point2D, BoardTile> locationToTile;
 
     public Board(int boardWidth, int boardHeight) {
@@ -28,22 +27,23 @@ public class Board implements GameState<Board> {
         regenerateGraphEdges(tileGraph, locationToTile);
     }
 
-    private static void regenerateGraphEdges(Graph<BoardTile, TileEdge> tileGraph, Map<Point2D, BoardTile> locationToTile) {
+    private static void regenerateGraphEdges(Graph tileGraph, Map<Point2D, BoardTile> locationToTile) {
+        // TODO: re-implement with a labeled graph
         // Clear all edges
-        tileGraph.edges().forEach(edge -> tileGraph.disconnect(edge.source(), edge.destination()));
-
-        // Regenerate Edges
-        for (Point2D point : locationToTile.keySet()) {
-            BoardTile currentTile = locationToTile.get(point);
-            Stream.of(point.left(), point.right(), point.up(), point.down())
-                    .filter(otherPoint -> locationToTile.containsKey(otherPoint))
-                    .map(otherPoint -> locationToTile.get(otherPoint))
-                    .filter(otherTile -> !otherTile.isBlocking())
-                    .forEach(otherTile -> tileGraph.connect(currentTile, otherTile));
-        }
+//        tileGraph.edges().forEach(edge -> tileGraph.disconnect(edge.source(), edge.destination()));
+//
+//        // Regenerate Edges
+//        for (Point2D point : locationToTile.keySet()) {
+//            String currentTile = locationToTile.get(point);
+//            Stream.of(point.left(), point.right(), point.up(), point.down())
+//                    .filter(otherPoint -> locationToTile.containsKey(otherPoint))
+//                    .map(otherPoint -> locationToTile.get(otherPoint))
+//                    .filter(otherTile -> !otherTile.isBlocking())
+//                    .forEach(otherTile -> tileGraph.connect(currentTile, otherTile));
+//        }
     }
 
-    private Board(Graph<BoardTile, TileEdge> tileGraph, Map<Point2D, BoardTile> locationToTile) {
+    private Board(Graph tileGraph, Map<Point2D, BoardTile> locationToTile) {
         this.locationToTile = locationToTile;
         this.tileGraph = tileGraph;
         regenerateGraphEdges(tileGraph, locationToTile);
