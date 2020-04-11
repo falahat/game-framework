@@ -7,7 +7,7 @@ import state.Point2D;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BoardTile implements Node {
+public class BoardTile {
     private final Point2D point;
     private final Set<BoardObject> members;
 
@@ -33,7 +33,7 @@ public class BoardTile implements Node {
     }
 
     @Override
-    public String getUniqueIdentifier() {
+    public String toString() {
         return String.format("Tile[%d, %d]", point.x, point.y);
     }
 }

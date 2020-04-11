@@ -7,7 +7,6 @@ import state.graph.TileEdge;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Board implements GameState<Board> {
@@ -31,7 +30,7 @@ public class Board implements GameState<Board> {
 
     private static void regenerateGraphEdges(Graph<BoardTile, TileEdge> tileGraph, Map<Point2D, BoardTile> locationToTile) {
         // Clear all edges
-        tileGraph.edges().forEach(tileGraph::remove);
+        tileGraph.edges().forEach(edge -> tileGraph.disconnect(edge.source(), edge.destination()));
 
         // Regenerate Edges
         for (Point2D point : locationToTile.keySet()) {
@@ -40,7 +39,7 @@ public class Board implements GameState<Board> {
                     .filter(otherPoint -> locationToTile.containsKey(otherPoint))
                     .map(otherPoint -> locationToTile.get(otherPoint))
                     .filter(otherTile -> !otherTile.isBlocking())
-                    .forEach(otherTile -> tileGraph.add(new TileEdge(currentTile, otherTile)));
+                    .forEach(otherTile -> tileGraph.connect(currentTile, otherTile));
         }
     }
 
@@ -67,15 +66,17 @@ public class Board implements GameState<Board> {
 
     @Override
     public Board copy() {
-        Map<Point2D, BoardTile> locationToTileCopy = this.locationToTile
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        Graph<BoardTile, TileEdge> graphCopy = new AdjacencyListGraph<>();
-        this.tileGraph.nodes().forEach(graphCopy::add);
-
-        return new Board(graphCopy, locationToTileCopy);
+//        Map<Point2D, BoardTile> locationToTileCopy = this.locationToTile
+//                .entrySet()
+//                .stream()
+//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+//
+//        AdjacencyListGraph<BoardTile, TileEdge> graphCopy = new AdjacencyListGraph<>();
+//        this.tileGraph.nodes().forEach(graphCopy::add);
+//
+//        return new Board(graphCopy, locationToTileCopy);
+        return null;
+        // TODO: Implement this when we have a better way of transfering nodes from graph => graph. Need to get rid of the whole V/E business
     }
 
 }
