@@ -3,14 +3,13 @@ package state;
 import model.AdjacencyListGraph;
 import model.graph.Graph;
 import state.graph.BoardTile;
-import state.graph.TileEdge;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class Board implements GameState<Board> {
-    private Graph<BoardTile, TileEdge> tileGraph;
+    private Graph<BoardTile> tileGraph;
     private Map<Point2D, BoardTile> locationToTile;
 
     public Board(int boardWidth, int boardHeight) {
@@ -28,7 +27,7 @@ public class Board implements GameState<Board> {
         regenerateGraphEdges(tileGraph, locationToTile);
     }
 
-    private static void regenerateGraphEdges(Graph<BoardTile, TileEdge> tileGraph, Map<Point2D, BoardTile> locationToTile) {
+    private static void regenerateGraphEdges(Graph<BoardTile> tileGraph, Map<Point2D, BoardTile> locationToTile) {
         // Clear all edges
         tileGraph.edges().forEach(edge -> tileGraph.disconnect(edge.source(), edge.destination()));
 
@@ -43,7 +42,7 @@ public class Board implements GameState<Board> {
         }
     }
 
-    private Board(Graph<BoardTile, TileEdge> tileGraph, Map<Point2D, BoardTile> locationToTile) {
+    private Board(Graph<BoardTile> tileGraph, Map<Point2D, BoardTile> locationToTile) {
         this.locationToTile = locationToTile;
         this.tileGraph = tileGraph;
         regenerateGraphEdges(tileGraph, locationToTile);
