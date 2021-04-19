@@ -1,15 +1,7 @@
 package state;
 
-import feature.FeatureExtractor;
-
-import java.util.Collection;
+import state.board.BoardView;
 
 public class AntView implements BoardView {
-    @Override
-    public Collection<FeatureExtractor<Board, ?>> getRequiredExtractors() {
-        // Nearest state.Food Distance
-        // Nearest state.Food state.Direction
-        //
-        return null;
-    }
+
 }

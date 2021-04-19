@@ -1,7 +1,8 @@
 package actor;
 
-import state.Board;
-import state.BoardView;
+import state.board.Board;
+import state.board.BoardView;
+import state.board.ReadableBoard;
 
-public interface Board2DActor extends Actor<Board, BoardView> {
+public interface Board2DActor extends Actor<ReadableBoard, BoardView> {
 }

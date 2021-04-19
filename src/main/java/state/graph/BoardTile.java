@@ -1,7 +1,6 @@
 package state.graph;
 
-import model.node.Node;
-import state.BoardObject;
+import state.board.BoardObject;
 import state.Point2D;
 
 import java.util.HashSet;

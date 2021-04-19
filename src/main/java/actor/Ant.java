@@ -1,35 +1,37 @@
 package actor;
 
-import state.Board;
-import state.BoardView;
+import state.board.Board;
+import state.board.BoardView;
 import state.GameStateView;
+import state.board.ReadableBoard;
 
 import java.util.Collection;
 
 
 public class Ant implements Board2DActor {
+
     @Override
-    public Action<Board> decide(GameStateView<Board> currentState, Collection<Action<Board>> allowedActions) {
+    public Action<ReadableBoard> decide(GameStateView<ReadableBoard> currentView, Collection<Action<ReadableBoard>> allowedActions) {
         return null;
     }
 
     @Override
-    public Action<Board> decide(GameStateView<Board> currentState) {
+    public Action<ReadableBoard> decide(GameStateView<ReadableBoard> currentView) {
         return null;
     }
 
     @Override
-    public Collection<Action<Board>> getAllowedActions(Board currentState) {
+    public Collection<Action<ReadableBoard>> getAllowedActions(ReadableBoard currentView) {
         return null;
     }
 
     @Override
-    public BoardView getRequestedView(Board currentState) {
+    public BoardView getRequestedView(ReadableBoard currentState) {
         return null;
     }
 
     @Override
-    public void learn(Action<Board> decided, Board firstState, BoardView firstView, Board nextState, BoardView nextView) {
+    public void learn(Action<ReadableBoard> decided, ReadableBoard firstState, BoardView firstView, ReadableBoard nextState, BoardView nextView) {
 
     }
 }

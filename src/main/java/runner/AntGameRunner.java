@@ -1,13 +1,15 @@
 package runner;
 
 import actor.Action;
+import actor.Actor;
 import actor.Board2DActor;
-import state.Board;
-import state.BoardView;
+import state.board.Board;
+import state.board.ReadableBoard;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AntGameRunner implements GameRunner<Board> {
+public class AntGameRunner implements GameRunner<ReadableBoard> {
     private Board board;
     private List<Board2DActor> actors;
 
@@ -18,23 +20,10 @@ public class AntGameRunner implements GameRunner<Board> {
     }
 
     @Override
-    public void turn() {
-        Board currentState = board.copy();
-
-        for (Board2DActor actor : actors) {
-            BoardView currentView = actor.getRequestedView(currentState);
-
-            Action<Board> decided = actor.decide(currentView);
-
-            Board nextState = currentState.copy();
-            decided.updateState(nextState);
-
-            BoardView nextView = actor.getRequestedView(nextState);
-
-            actor.learn(decided, currentState, currentView, nextState, nextView);
-
-            currentState = nextState;
-        }
+    public List<Actor<ReadableBoard, ?>> getActorsForCurrentTurn() {
+        List<Actor<ReadableBoard, ?>> result = new ArrayList<>();
+        actors.forEach(result::add);
+        return result;
     }
 
     @Override
@@ -45,5 +34,10 @@ public class AntGameRunner implements GameRunner<Board> {
     @Override
     public Board getCurrentState() {
         return board;
+    }
+
+    @Override
+    public ReadableBoard calculateNextState(ReadableBoard previousState, List<Action<ReadableBoard>> chosen) {
+        return null;
     }
 }

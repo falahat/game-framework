@@ -1,21 +1,28 @@
-package state;
+package state.board;
 
 import model.AdjacencyListGraph;
 import model.graph.Graph;
+import state.GameState;
+import state.Point2D;
 import state.graph.BoardTile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class Board implements GameState<Board> {
+public class Board implements ReadableBoard, WritableBoard, GameState<ReadableBoard, WritableBoard> {
+
     private Graph<BoardTile> tileGraph;
     private Map<Point2D, BoardTile> locationToTile;
 
-    public Board(int boardWidth, int boardHeight) {
+    public Board() {
         this.locationToTile = new HashMap<>();
         this.tileGraph = new AdjacencyListGraph<>();
+    }
 
+    public Board(int boardWidth, int boardHeight) {
+        this();
         for (int x = 0; x < boardWidth; x++) {
             for (int y = 0; y < boardHeight; y++) {
                 Point2D point = new Point2D(x, y);
@@ -46,6 +53,7 @@ public class Board implements GameState<Board> {
         this.locationToTile = locationToTile;
         this.tileGraph = tileGraph;
         regenerateGraphEdges(tileGraph, locationToTile);
+        // TODO: Deep-copy the data correctly
     }
 
     public void insert(BoardObject boardObject, Point2D firstLoc) {
@@ -64,18 +72,21 @@ public class Board implements GameState<Board> {
     }
 
     @Override
-    public Board copy() {
-//        Map<Point2D, BoardTile> locationToTileCopy = this.locationToTile
-//                .entrySet()
-//                .stream()
-//                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-//
-//        AdjacencyListGraph<BoardTile, TileEdge> graphCopy = new AdjacencyListGraph<>();
-//        this.tileGraph.nodes().forEach(graphCopy::add);
-//
-//        return new Board(graphCopy, locationToTileCopy);
-        return null;
-        // TODO: Implement this when we have a better way of transfering nodes from graph => graph. Need to get rid of the whole V/E business
+    public ReadableBoard immutableCopy() {
+        return this; // we can be cheaper
     }
 
+    @Override
+    public WritableBoard mutableCopy() {
+        return this.copy();
+    }
+
+    private Board copy() {
+        return new Board(this.tileGraph, this.locationToTile);
+    }
+
+    @Override
+    public List<Point2D> neighbors(Point2D center) {
+        return null;
+    }
 }
