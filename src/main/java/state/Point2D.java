@@ -27,7 +27,7 @@ public class Point2D {
 
     @Override
     public String toString() {
-        return super.toString();
+        return String.format("(%d, %d)", x, y);
     }
 
     public Point2D transform(int xDiff, int yDiff) {

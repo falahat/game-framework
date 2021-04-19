@@ -9,15 +9,18 @@ import state.graph.BoardTile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, WritableBoard> {
 
     private Graph<BoardTile> tileGraph;
     private Map<Point2D, BoardTile> locationToTile;
+    private Map<BoardObject, BoardTile> memberToTile;
 
     public WritableBoard() {
         this.locationToTile = new HashMap<>();
+        this.memberToTile = new HashMap<>();
         this.tileGraph = new AdjacencyListGraph<>();
     }
 
@@ -49,26 +52,56 @@ public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, Wr
         }
     }
 
-    private WritableBoard(Graph<BoardTile> tileGraph, Map<Point2D, BoardTile> locationToTile) {
+    private WritableBoard(Graph<BoardTile> tileGraph,
+                          Map<Point2D, BoardTile> locationToTile,
+                          Map<BoardObject, BoardTile> memberToTile) {
+
         this.locationToTile = locationToTile;
         this.tileGraph = tileGraph;
+        this.memberToTile = memberToTile;
         regenerateGraphEdges(tileGraph, locationToTile);
         // TODO: Deep-copy the data correctly
     }
 
     public void insert(BoardObject boardObject, Point2D firstLoc) {
-        if (!locationToTile.containsKey(firstLoc)) {
+        if (memberToTile.containsKey(boardObject)) {
+            throw new IllegalStateException("Attempting to insert an object that already exists");
+        } else if (!locationToTile.containsKey(firstLoc)) {
             throw new IllegalArgumentException("No tile found at location");
         }
-        BoardTile tile = locationToTile.get(firstLoc);
+
+        move(boardObject, null, locationToTile.get(firstLoc));
     }
 
     public void move(BoardObject boardObject, Point2D newLocation) {
+        if (!memberToTile.containsKey(boardObject)) {
+            throw new IllegalStateException("Attempting to move an object that does not exist");
+        } else if (!locationToTile.containsKey(newLocation)) {
+            throw new IllegalArgumentException("No tile found at location");
+        }
 
+        move(boardObject, memberToTile.get(boardObject), locationToTile.get(newLocation));
     }
 
     public void remove(BoardObject boardObject) {
+        if (!memberToTile.containsKey(boardObject)) {
+            throw new IllegalStateException("Attempting to delete an object that does not exist");
+        }
 
+        move(boardObject, memberToTile.get(boardObject), null);
+    }
+
+    private void move(BoardObject boardObject, BoardTile oldLocation, BoardTile newLocation) {
+        if (oldLocation != null) {
+            oldLocation.remove(boardObject);
+        }
+
+        if (newLocation == null) {
+            memberToTile.remove(boardObject);
+        } else {
+            newLocation.add(boardObject);
+            memberToTile.put(boardObject, newLocation);
+        }
     }
 
     @Override
@@ -82,11 +115,21 @@ public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, Wr
     }
 
     private WritableBoard copy() {
-        return new WritableBoard(this.tileGraph, this.locationToTile);
+        return new WritableBoard(this.tileGraph, new HashMap<>(this.locationToTile), new HashMap<>(this.memberToTile));
     }
 
     @Override
     public List<Point2D> neighbors(Point2D center) {
         return null;
+    }
+
+    @Override
+    public List<BoardObject> members(Point2D location) {
+        return null;
+    }
+
+    @Override
+    public Optional<Point2D> find(BoardObject toFind) {
+        return Optional.empty();
     }
 }

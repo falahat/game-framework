@@ -6,7 +6,7 @@ import state.Point2D;
 import java.util.HashSet;
 import java.util.Set;
 
-public class BoardTile {
+public class BoardTile implements Cloneable {
     private final Point2D point;
     private final Set<BoardObject> members;
 
@@ -17,6 +17,10 @@ public class BoardTile {
 
     public void add(BoardObject newMember) {
         this.members.add(newMember);
+    }
+
+    public void remove(BoardObject newMember) {
+        this.members.remove(newMember);
     }
 
     public Set<BoardObject> getMembers() {
