@@ -5,8 +5,8 @@ import state.board.BoardView;
 import state.board.ReadableBoard;
 
 public class AntView implements BoardView {
-    private Ant actor;
-    private ReadableBoard rawBoard;
+    private final Ant actor;
+    private final ReadableBoard rawBoard;
 
     public AntView(ReadableBoard board, Ant actor) {
         this.rawBoard = board;

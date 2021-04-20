@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, WritableBoard> {
 
-    private DelegatingLabeledGraph<Point2D, BoardTile> tileGraph;
-    private Map<BoardObject, BoardTile> memberToTile;
+    private final DelegatingLabeledGraph<Point2D, BoardTile> tileGraph;
+    private final Map<BoardObject, BoardTile> memberToTile;
 
     public WritableBoard() {
         this.memberToTile = new HashMap<>();

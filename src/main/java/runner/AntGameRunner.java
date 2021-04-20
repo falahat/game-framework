@@ -11,7 +11,7 @@ import java.util.List;
 
 public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     private WritableBoard board;
-    private List<Board2DActor> actors;
+    private final List<Board2DActor> actors;
 
     public AntGameRunner(WritableBoard board, List<Board2DActor> actors) {
         // Assume actors have already been inserted on the board.
