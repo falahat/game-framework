@@ -1,28 +1,22 @@
 package state.board;
 
-import model.AdjacencyListGraph;
 import model.UndirectedAdjacencyListGraph;
-import model.graph.Graph;
+import model.graph.DelegatingLabeledGraph;
 import state.GameState;
 import state.Point2D;
 import state.graph.BoardTile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, WritableBoard> {
 
-    private Graph tileGraph;
-    private Map<Point2D, BoardTile> locationToTile;
+    private DelegatingLabeledGraph<Point2D, BoardTile> tileGraph;
     private Map<BoardObject, BoardTile> memberToTile;
 
     public WritableBoard() {
-        this.locationToTile = new HashMap<>();
         this.memberToTile = new HashMap<>();
-        this.tileGraph = new UndirectedAdjacencyListGraph();
+        this.tileGraph = new DelegatingLabeledGraph<>(new UndirectedAdjacencyListGraph<>());
     }
 
     public WritableBoard(int boardWidth, int boardHeight) {
@@ -31,59 +25,48 @@ public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, Wr
             for (int y = 0; y < boardHeight; y++) {
                 Point2D point = new Point2D(x, y);
                 BoardTile tile = new BoardTile(point);
-                locationToTile.put(point, tile);
+                tileGraph.put(point, tile);
             }
         }
 
-        regenerateGraphEdges(tileGraph, locationToTile);
+        regenerateGraphEdges(tileGraph);
     }
 
-    private static void regenerateGraphEdges(Graph tileGraph, Map<Point2D, BoardTile> locationToTile) {
+    private static void regenerateGraphEdges(DelegatingLabeledGraph<Point2D, BoardTile> tileGraph) {
         // Regenerate Edges
-        for (Point2D point : locationToTile.keySet()) {
-            BoardTile currentTile = locationToTile.get(point);
-            Stream.of(point.left(), point.right(), point.up(), point.down())
-                    .filter(otherPoint -> locationToTile.containsKey(otherPoint))
-                    .map(otherPoint -> locationToTile.get(otherPoint))
-                    .filter(otherTile -> !otherTile.isBlocking())
-                    .forEach(otherTile -> tileGraph.connect(currentTile, otherTile));
+        for (Point2D currentPoint : tileGraph.nodes()) {
+            Stream.of(currentPoint.left(), currentPoint.right(), currentPoint.up(), currentPoint.down())
+                    .filter(tileGraph::contains) // If not contained, this point might be out of bounds
+                    .filter(otherPoint -> !tileGraph.get(otherPoint).isBlocking())
+                    .forEach(otherPoint -> tileGraph.connect(currentPoint, otherPoint));
         }
     }
 
-    private WritableBoard(Graph tileGraph,
-                          Map<Point2D, BoardTile> locationToTile,
+    private WritableBoard(DelegatingLabeledGraph<Point2D, BoardTile> tileGraph,
                           Map<BoardObject, BoardTile> memberToTile) {
-        this.locationToTile = locationToTile;
         this.tileGraph = tileGraph;
         this.memberToTile = memberToTile;
-        regenerateGraphEdges(tileGraph, locationToTile);
+        regenerateGraphEdges(tileGraph);
         // TODO: Deep-copy the data correctly
     }
 
     public void insert(BoardObject boardObject, Point2D firstLoc) {
-        if (memberToTile.containsKey(boardObject)) {
-            throw new IllegalStateException("Attempting to insert an object that already exists");
-        } else if (!locationToTile.containsKey(firstLoc)) {
-            throw new IllegalArgumentException("No tile found at location");
-        }
+        assertMemberDoesNotExist(boardObject);
+        assertLocationExists(firstLoc);
 
-        move(boardObject, null, locationToTile.get(firstLoc));
+        move(boardObject, null, tileGraph.get(firstLoc));
     }
 
-    public void move(BoardObject boardObject, Point2D newLocation) {
-        if (!memberToTile.containsKey(boardObject)) {
-            throw new IllegalStateException("Attempting to move an object that does not exist");
-        } else if (!locationToTile.containsKey(newLocation)) {
-            throw new IllegalArgumentException("No tile found at location");
-        }
 
-        move(boardObject, memberToTile.get(boardObject), locationToTile.get(newLocation));
+    public void move(BoardObject boardObject, Point2D newLocation) {
+        assertMemberExists(boardObject);
+        assertLocationExists(newLocation);
+
+        move(boardObject, memberToTile.get(boardObject), tileGraph.get(newLocation));
     }
 
     public void remove(BoardObject boardObject) {
-        if (!memberToTile.containsKey(boardObject)) {
-            throw new IllegalStateException("Attempting to delete an object that does not exist");
-        }
+        assertMemberExists(boardObject);
 
         move(boardObject, memberToTile.get(boardObject), null);
     }
@@ -112,21 +95,43 @@ public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, Wr
     }
 
     private WritableBoard copy() {
-        return new WritableBoard(this.tileGraph, new HashMap<>(this.locationToTile), new HashMap<>(this.memberToTile));
+        return new WritableBoard(this.tileGraph, new HashMap<>(this.memberToTile));
     }
 
     @Override
     public List<Point2D> neighbors(Point2D center) {
-        return null;
+        assertLocationExists(center);
+
+        return new ArrayList<>(tileGraph.edges(center)); // TODO: do a last-second check to make sure they are not blocked?
     }
 
     @Override
     public List<BoardObject> members(Point2D location) {
-        return null;
+        assertLocationExists(location);
+
+        return new ArrayList<>(tileGraph.get(location).getMembers());
     }
 
     @Override
     public Optional<Point2D> find(BoardObject toFind) {
-        return Optional.empty();
+        return Optional.ofNullable(this.memberToTile.get(toFind)).map(BoardTile::getPoint);
+    }
+
+    public void assertMemberExists(BoardObject boardObject) {
+        if (!memberToTile.containsKey(boardObject)) {
+            throw new IllegalStateException("Attempting to move an object that does not exist");
+        }
+    }
+
+    public void assertLocationExists(Point2D firstLoc) {
+        if (!tileGraph.contains(firstLoc)) {
+            throw new IllegalArgumentException("No tile found at location");
+        }
+    }
+
+    public void assertMemberDoesNotExist(BoardObject boardObject) {
+        if (memberToTile.containsKey(boardObject)) {
+            throw new IllegalStateException("Attempting to insert an object that already exists");
+        }
     }
 }
