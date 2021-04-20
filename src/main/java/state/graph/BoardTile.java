@@ -1,16 +1,18 @@
 package state.graph;
 
+import model.node.Node;
 import state.board.BoardObject;
 import state.Point2D;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class BoardTile implements Cloneable {
+public class BoardTile extends Node<Point2D> {
     private final Point2D point;
     private final Set<BoardObject> members;
 
     public BoardTile(Point2D point) {
+        super(point);
         this.point = point;
         this.members = new HashSet<>();
     }

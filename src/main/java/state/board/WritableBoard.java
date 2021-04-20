@@ -1,6 +1,7 @@
 package state.board;
 
 import model.AdjacencyListGraph;
+import model.UndirectedAdjacencyListGraph;
 import model.graph.Graph;
 import state.GameState;
 import state.Point2D;
@@ -14,14 +15,14 @@ import java.util.stream.Stream;
 
 public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, WritableBoard> {
 
-    private Graph<BoardTile> tileGraph;
+    private Graph tileGraph;
     private Map<Point2D, BoardTile> locationToTile;
     private Map<BoardObject, BoardTile> memberToTile;
 
     public WritableBoard() {
         this.locationToTile = new HashMap<>();
         this.memberToTile = new HashMap<>();
-        this.tileGraph = new AdjacencyListGraph<>();
+        this.tileGraph = new UndirectedAdjacencyListGraph();
     }
 
     public WritableBoard(int boardWidth, int boardHeight) {
@@ -37,10 +38,7 @@ public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, Wr
         regenerateGraphEdges(tileGraph, locationToTile);
     }
 
-    private static void regenerateGraphEdges(Graph<BoardTile> tileGraph, Map<Point2D, BoardTile> locationToTile) {
-        // Clear all edges
-        tileGraph.edges().forEach(edge -> tileGraph.disconnect(edge.source(), edge.destination()));
-
+    private static void regenerateGraphEdges(Graph tileGraph, Map<Point2D, BoardTile> locationToTile) {
         // Regenerate Edges
         for (Point2D point : locationToTile.keySet()) {
             BoardTile currentTile = locationToTile.get(point);
@@ -52,10 +50,9 @@ public class WritableBoard implements ReadableBoard, GameState<ReadableBoard, Wr
         }
     }
 
-    private WritableBoard(Graph<BoardTile> tileGraph,
+    private WritableBoard(Graph tileGraph,
                           Map<Point2D, BoardTile> locationToTile,
                           Map<BoardObject, BoardTile> memberToTile) {
-
         this.locationToTile = locationToTile;
         this.tileGraph = tileGraph;
         this.memberToTile = memberToTile;

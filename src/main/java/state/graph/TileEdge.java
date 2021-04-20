@@ -1,6 +1,5 @@
 package state.graph;
 
-import model.edge.Edge;
 import state.Direction;
 
 // TODO: move this logic elsewhere (labeled graph)
