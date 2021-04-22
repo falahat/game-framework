@@ -3,6 +3,7 @@ package runner;
 import actor.Action;
 import actor.Actor;
 import actor.Board2DActor;
+import actor.Person;
 import state.board.ReadableBoard;
 import state.board.GameBoard;
 import state.board.WritableBoard;
@@ -14,11 +15,13 @@ import java.util.List;
 public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     private WritableBoard board;
     private final List<Board2DActor> actors;
+    private final Person player; // this is one of the actors, but will be tracked more closely
 
-    public AntGameRunner(GameBoard board, List<Board2DActor> actors) {
+    public AntGameRunner(GameBoard board, Person player, List<Board2DActor> actors) {
         // Assume actors have already been inserted on the board.
         this.board = board;
         this.actors = actors;
+        this.player = player;
     }
 
     @Override
@@ -27,8 +30,10 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
             int rx = GameCanvas.TILE_SIZE * point.x;
             int ry = GameCanvas.TILE_SIZE * point.y;
 
-            g.setColor(Color.cyan);
-            g.drawOval(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
+            boolean isVisited = player.hasVisited(point);
+            
+            g.setColor(isVisited ? Color.green : Color.gray);
+            g.fillOval(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
 
             g.setColor(Color.green);
             board.members(point).forEach(boardObj -> boardObj.render(g, rx, ry));

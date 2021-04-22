@@ -7,23 +7,27 @@ import actor.actions.TurnRight;
 import runner.Drawable;
 import state.PersonView;
 import state.Direction;
+import state.Point2D;
 import state.board.BoardWalker;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Person implements Board2DActor, BoardWalker, Drawable {
     private BufferedImage spriteSheet;
     private Direction direction;
+    private final Set<Point2D> visited;
 
     public Person(Direction direction) {
         this.direction = direction;
+        this.visited = new HashSet<>();
+    }
+
+    public boolean hasVisited(Point2D location) {
+        return visited.contains(location);
     }
 
     @Override
@@ -59,7 +63,7 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
         List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
 
         // Can always turn left/right
-        actions.add(new TurnLeft(this));
+//        actions.add(new TurnLeft(this)); // only turn right to decrease the chance of spinning in place
         actions.add(new TurnRight(this));
 
         if (visible.isAboveFood()) {
@@ -78,6 +82,8 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
     @Override
     public void learn(Action<ReadableBoard, WritableBoard> decided, ReadableBoard firstState, ReadableBoard nextState) {
         // TODO: implement
+        Optional<Point2D> newLocation = nextState.find(this);
+        newLocation.ifPresent(visited::add);
     }
 
     private PersonView getVisibleState(ReadableBoard fullState) {
@@ -104,9 +110,19 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
         if (spriteSheet == null) {
             spriteSheet = loadImage("/hero1.png");
         }
-        // select the correct 16x16 tile
-        // TODO: animate and iterate this in the future
-        return spriteSheet.getSubimage(0, 0, 32, 32);
+        // down
+        // side (right)
+        // up
+        switch (getDirection()) {
+            case NORTH:
+                return spriteSheet.getSubimage(0, 0, 32, 32);
+            case SOUTH:
+                return spriteSheet.getSubimage(0, 2*32, 32, 32);
+            case WEST:
+            case EAST: // TODO: flip
+            default:
+                return spriteSheet.getSubimage(0, 32, 32, 32);
+        }
     }
 
 }

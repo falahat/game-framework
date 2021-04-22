@@ -16,11 +16,11 @@ public class SimpleGameTest {
         GameBoard gameBoard = new GameBoard(10, 10);
 
         List<Board2DActor> actors = new ArrayList<>();
-        Person ant = new Person(Direction.NORTH);
-        actors.add(ant);
-        gameBoard.insert(ant, new Point2D(5, 5));
+        Person person = new Person(Direction.NORTH);
+        actors.add(person);
+        gameBoard.insert(person, new Point2D(5, 5));
 
-        AntGameRunner runner = new AntGameRunner(gameBoard, actors);
+        AntGameRunner runner = new AntGameRunner(gameBoard, person, actors);
         runner.turn();
     }
 }

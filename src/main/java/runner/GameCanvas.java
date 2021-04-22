@@ -37,10 +37,10 @@ public class GameCanvas extends Canvas implements Runnable {
         GameBoard gameBoard = new GameBoard(10, 10);
 
         List<Board2DActor> actors = new ArrayList<>();
-        Person ant = new Person(Direction.NORTH);
-        actors.add(ant);
+        Person player = new Person(Direction.NORTH);
+        actors.add(player);
 
-        gameBoard.insert(ant, new Point2D(5, 5));
+        gameBoard.insert(player, new Point2D(5, 5));
 
         gameBoard.insert(new Rock(), new Point2D(7, 6));
         gameBoard.insert(new Rock(), new Point2D(6, 6));
@@ -57,7 +57,7 @@ public class GameCanvas extends Canvas implements Runnable {
         gameBoard.insert(new Bread(), new Point2D(3, 5));
         gameBoard.insert(new Bread(), new Point2D(2, 5));
 
-        gameRunner = new AntGameRunner(gameBoard, actors);
+        gameRunner = new AntGameRunner(gameBoard, player, actors);
     }
 
 
