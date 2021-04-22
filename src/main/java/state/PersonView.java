@@ -31,9 +31,13 @@ public class PersonView implements BoardView {
             throw new IllegalStateException("This actor does not exist in the board");
         }
 
-        Point2D ahead = currentLocation.get().transform(actor.getDirection());
+        return from(actor, board, currentLocation.get());
+    }
 
-        boolean isAboveFood = board.members(currentLocation.get()).stream().anyMatch(obj -> obj instanceof Bread);
+    public static PersonView from(Person actor, ReadableBoard board, Point2D currentLocation) {
+        Point2D ahead = currentLocation.transform(actor.getDirection());
+
+        boolean isAboveFood = board.members(currentLocation).stream().anyMatch(obj -> obj instanceof Bread);
         boolean isBlocked = !board.locations().contains(ahead) || board.members(ahead).stream().anyMatch(BoardObject::isBlocking);
 
         return new PersonView(isBlocked, isAboveFood);

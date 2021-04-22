@@ -22,7 +22,7 @@ public class SmartPerson extends Person {
 
     @Override
     public Action<ReadableBoard, WritableBoard> decide(GameStateView currentState, Collection<Action<ReadableBoard, WritableBoard>> allowedActions) {
-        return null;
+        return super.decide(currentState, allowedActions);
     }
 
     @Override
@@ -45,14 +45,14 @@ public class SmartPerson extends Person {
         this.valueOfActionPerState.get(firstState).put(decided.uniqueActionType(), newEstimate);
     }
 
-    private double getEstimatedScore(PersonView state, Action chosen) {
+    public double getEstimatedScore(PersonView state, Action chosen) {
         String actionKey = chosen.uniqueActionType();
         return valueOfActionPerState
                 .getOrDefault(state, Collections.emptyMap())
                 .getOrDefault(actionKey, DEFAULT_SCOPE);
     }
 
-    private double getMaximumEstimateScore(PersonView state) {
+    public double getMaximumEstimateScore(PersonView state) {
         return valueOfActionPerState
                 .getOrDefault(state, Collections.emptyMap()).values().stream().mapToDouble(a -> a)
                 .max()

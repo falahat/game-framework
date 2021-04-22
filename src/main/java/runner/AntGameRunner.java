@@ -1,9 +1,7 @@
 package runner;
 
-import actor.Action;
-import actor.Actor;
-import actor.Board2DActor;
-import actor.Person;
+import actor.*;
+import state.PersonView;
 import state.board.ReadableBoard;
 import state.board.GameBoard;
 import state.board.WritableBoard;
@@ -30,9 +28,20 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
             int rx = GameCanvas.TILE_SIZE * point.x;
             int ry = GameCanvas.TILE_SIZE * point.y;
 
-            boolean isVisited = player.hasVisited(point);
+            boolean isScoring = player instanceof SmartPerson;
+            if (isScoring) {
+                // (255, 0, 0) => (0, 255, 0)
+                double maxValue = 20;
+                PersonView hypothetical = PersonView.from(player, board, point);
+                double scoreForLocation = ((SmartPerson) player).getMaximumEstimateScore(hypothetical);
+                int rVal = (int) (255 * Math.min(1, scoreForLocation/maxValue));
 
-            g.setColor(isVisited ? Color.green : Color.gray);
+                g.setColor(new Color(255-rVal, rVal, 0));
+                g.drawString(String.format("%f", scoreForLocation), rx, ry);
+            } else {
+                boolean isVisited = player.hasVisited(point);
+                g.setColor(isVisited ? Color.green : Color.gray);
+            }
             g.fillOval(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
 
             g.setColor(Color.green);

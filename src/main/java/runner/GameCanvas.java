@@ -2,6 +2,7 @@ package runner;
 
 import actor.Board2DActor;
 import actor.Person;
+import actor.SmartPerson;
 import state.Direction;
 import state.Point2D;
 import state.board.Bread;
@@ -37,7 +38,7 @@ public class GameCanvas extends Canvas implements Runnable {
         GameBoard gameBoard = new GameBoard(10, 10);
 
         List<Board2DActor> actors = new ArrayList<>();
-        Person player = new Person(Direction.NORTH);
+        SmartPerson player = new SmartPerson(Direction.NORTH);
         actors.add(player);
 
         gameBoard.insert(player, new Point2D(5, 5));
@@ -49,12 +50,11 @@ public class GameCanvas extends Canvas implements Runnable {
         gameBoard.insert(new Rock(), new Point2D(3, 6));
         gameBoard.insert(new Rock(), new Point2D(2, 6));
 
-
-        gameBoard.insert(new Bread(), new Point2D(7, 5));
+        gameBoard.insert(new Bread(), new Point2D(7, 4));
         gameBoard.insert(new Bread(), new Point2D(6, 5));
-        gameBoard.insert(new Bread(), new Point2D(5, 5));
+        gameBoard.insert(new Bread(), new Point2D(5, 3));
         gameBoard.insert(new Bread(), new Point2D(4, 5));
-        gameBoard.insert(new Bread(), new Point2D(3, 5));
+        gameBoard.insert(new Bread(), new Point2D(3, 7));
         gameBoard.insert(new Bread(), new Point2D(2, 5));
 
         gameRunner = new AntGameRunner(gameBoard, player, actors);
