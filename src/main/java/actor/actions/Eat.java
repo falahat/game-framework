@@ -16,9 +16,9 @@ public class Eat implements Action<ReadableBoard, WritableBoard> {
         Point2D location = currentGameState.find(eater)
                 .orElseThrow(() -> new IllegalStateException("Actor did not exist"));
 
-        Sugar food = currentGameState.members(location).stream()
-                .filter(member -> member instanceof Sugar)
-                .map(member -> (Sugar) member)
+        Bread food = currentGameState.members(location).stream()
+                .filter(member -> member instanceof Bread)
+                .map(member -> (Bread) member)
                 .findAny()
                 .orElseThrow(() -> new IllegalStateException("Tried to eat but no food found on tile"));
 

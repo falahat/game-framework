@@ -1,4 +1,4 @@
-import actor.Ant;
+import actor.Person;
 import actor.Board2DActor;
 import org.junit.jupiter.api.Test;
 import runner.AntGameRunner;
@@ -16,7 +16,7 @@ public class SimpleGameTest {
         GameBoard gameBoard = new GameBoard(10, 10);
 
         List<Board2DActor> actors = new ArrayList<>();
-        Ant ant = new Ant(Direction.NORTH);
+        Person ant = new Person(Direction.NORTH);
         actors.add(ant);
         gameBoard.insert(ant, new Point2D(5, 5));
 

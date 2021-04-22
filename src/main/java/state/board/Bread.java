@@ -3,15 +3,14 @@ package state.board;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class Rock implements BoardObject {
-
+public class Bread implements BoardObject {
     @Override
     public boolean isBlocking() {
-        return true;
+        return false;
     }
 
     @Override
     public BufferedImage getImage() throws IOException {
-        return loadImage("/Bug.png");
+        return loadImage("/Bread.png");
     }
 }

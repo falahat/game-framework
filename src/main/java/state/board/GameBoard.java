@@ -105,6 +105,11 @@ public class GameBoard implements ReadableBoard, WritableBoard {
     }
 
     @Override
+    public Set<Point2D> locations() {
+        return new HashSet<>(mapGraph.nodes());
+    }
+
+    @Override
     public List<BoardObject> members(Point2D location) {
         assertLocationExists(location);
 

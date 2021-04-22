@@ -7,6 +7,7 @@ import state.board.ReadableBoard;
 import state.board.GameBoard;
 import state.board.WritableBoard;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,20 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     }
 
     @Override
+    public void render(Graphics g) {
+        board.locations().forEach(point -> {
+            int rx = GameCanvas.TILE_SIZE * point.x;
+            int ry = GameCanvas.TILE_SIZE * point.y;
+
+            g.setColor(Color.cyan);
+            g.drawOval(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
+
+            g.setColor(Color.green);
+            board.members(point).forEach(boardObj -> boardObj.render(g, rx, ry));
+        });
+    }
+
+    @Override
     public List<Actor<ReadableBoard, WritableBoard>> getActorsForCurrentTurn() {
         return new ArrayList<>(actors);
     }
@@ -32,7 +47,10 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
 
     @Override
     public WritableBoard calculateNextState(ReadableBoard previousState, List<Action<ReadableBoard, WritableBoard>> chosen) {
-        return null;
+        // later, we can make changes which don't depend on an action, such as increasing hunger by 1 each round.
+        WritableBoard nextState = previousState.mutableCopy();
+        chosen.forEach(action -> action.updateState(nextState));
+        return nextState;
     }
 
     @Override

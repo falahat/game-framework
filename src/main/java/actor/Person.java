@@ -4,22 +4,25 @@ import actor.actions.Eat;
 import actor.actions.MoveAhead;
 import actor.actions.TurnLeft;
 import actor.actions.TurnRight;
-import state.AntView;
+import runner.Drawable;
+import state.PersonView;
 import state.Direction;
 import state.board.BoardWalker;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-
-public class Ant implements Board2DActor, BoardWalker {
+public class Person implements Board2DActor, BoardWalker, Drawable {
+    private BufferedImage spriteSheet;
     private Direction direction;
 
-    public Ant(Direction direction) {
+    public Person(Direction direction) {
         this.direction = direction;
     }
 
@@ -51,7 +54,7 @@ public class Ant implements Board2DActor, BoardWalker {
 
     @Override
     public Collection<Action<ReadableBoard, WritableBoard>> getAllowedActions(ReadableBoard currentView) {
-        AntView visible = getVisibleState(currentView);
+        PersonView visible = getVisibleState(currentView);
 
         List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
 
@@ -77,8 +80,8 @@ public class Ant implements Board2DActor, BoardWalker {
         // TODO: implement
     }
 
-    private AntView getVisibleState(ReadableBoard fullState) {
-        return new AntView(fullState, this);
+    private PersonView getVisibleState(ReadableBoard fullState) {
+        return new PersonView(fullState, this);
     }
 
     @Override
@@ -95,4 +98,15 @@ public class Ant implements Board2DActor, BoardWalker {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+
+    @Override
+    public BufferedImage getImage() throws IOException {
+        if (spriteSheet == null) {
+            spriteSheet = loadImage("/hero1.png");
+        }
+        // select the correct 16x16 tile
+        // TODO: animate and iterate this in the future
+        return spriteSheet.getSubimage(0, 0, 32, 32);
+    }
+
 }
