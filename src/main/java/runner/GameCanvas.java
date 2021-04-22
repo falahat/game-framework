@@ -17,15 +17,18 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 // credit to https://code-knowledge.com/java-create-game-introduction/
 public class GameCanvas extends Canvas implements Runnable {
 
     public static final int NUM_TILES = 16;
-    public static final int TILE_SIZE = 50;
+    public static final int TILE_SIZE = 100;
+    public static final int INNER_TILE_SIZE = TILE_SIZE/3;
     public static final int WIDTH = NUM_TILES * TILE_SIZE;
     public static final int HEIGHT = NUM_TILES * TILE_SIZE;
     public static final int SCALE = 1;
+    public static final int GRAPH_WIDTH = 10;
     public final String TITLE = "Game Runner";
 
     private boolean running = false;
@@ -35,7 +38,7 @@ public class GameCanvas extends Canvas implements Runnable {
 
     public void init(){
         requestFocus();
-        GameBoard gameBoard = new GameBoard(10, 10);
+        GameBoard gameBoard = new GameBoard(GRAPH_WIDTH, GRAPH_WIDTH);
 
         List<Board2DActor> actors = new ArrayList<>();
         SmartPerson player = new SmartPerson(Direction.NORTH);
@@ -43,19 +46,16 @@ public class GameCanvas extends Canvas implements Runnable {
 
         gameBoard.insert(player, new Point2D(5, 5));
 
-        gameBoard.insert(new Rock(), new Point2D(7, 6));
-        gameBoard.insert(new Rock(), new Point2D(6, 6));
-        gameBoard.insert(new Rock(), new Point2D(5, 6));
-        gameBoard.insert(new Rock(), new Point2D(4, 6));
-        gameBoard.insert(new Rock(), new Point2D(3, 6));
-        gameBoard.insert(new Rock(), new Point2D(2, 6));
-
-        gameBoard.insert(new Bread(), new Point2D(7, 4));
-        gameBoard.insert(new Bread(), new Point2D(6, 5));
-        gameBoard.insert(new Bread(), new Point2D(5, 3));
-        gameBoard.insert(new Bread(), new Point2D(4, 5));
-        gameBoard.insert(new Bread(), new Point2D(3, 7));
-        gameBoard.insert(new Bread(), new Point2D(2, 5));
+        Random random = new Random();
+        for (int x = 0; x < GRAPH_WIDTH; x++) {
+            for (int y = 0; y < GRAPH_WIDTH; y++) {
+                if (random.nextBoolean()) {
+                    gameBoard.insert(new Bread(), new Point2D(x, y));
+                } else if (random.nextBoolean() && random.nextBoolean()) {
+                    gameBoard.insert(new Rock(), new Point2D(x, y));
+                }
+            }
+        }
 
         gameRunner = new AntGameRunner(gameBoard, player, actors);
     }

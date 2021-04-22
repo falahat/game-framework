@@ -11,4 +11,6 @@ public interface BoardWalker extends BoardObject {
 
     boolean hasVisited(Point2D location);
     void markAsVisited(Point2D location);
+
+    void clearAllVisited();
 }

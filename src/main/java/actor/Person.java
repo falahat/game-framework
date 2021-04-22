@@ -2,12 +2,10 @@ package actor;
 
 import actor.actions.Eat;
 import actor.actions.MoveAhead;
+import actor.actions.TurnLeft;
 import actor.actions.TurnRight;
 import runner.Drawable;
-import state.GameStateView;
-import state.PersonView;
-import state.Direction;
-import state.Point2D;
+import state.*;
 import state.board.BoardWalker;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
@@ -54,22 +52,18 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
 
     @Override
     public Collection<Action<ReadableBoard, WritableBoard>> getAllowedActions(GameStateView currentView) {
-        PersonView visible = (PersonView) currentView;
+        AbsolutePositionedView visible = (AbsolutePositionedView) currentView;
 
         List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
 
-        // Can always turn left/right
-//        actions.add(new TurnLeft(this)); // only turn right to decrease the chance of spinning in place
-        actions.add(new TurnRight(this));
-
         if (visible.isAboveFood()) {
             actions.add(new Eat(this));
+        } else {
+            if (!visible.isBlockedAhead()) {
+                actions.add(new MoveAhead(this));
+            }
+            actions.add(new TurnRight(this));
         }
-
-        if (!visible.isBlockedAhead()) {
-            actions.add(new MoveAhead(this));
-        }
-
         // Can attempt to go forward, but might be blocked
         // If we are 100% sure the tile in front is blocked, we will not go forward
         return actions;
@@ -78,6 +72,11 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
     @Override
     public void markAsVisited(Point2D location) {
         visited.add(location);
+    }
+
+    @Override
+    public void clearAllVisited() {
+        visited.clear();
     }
 
     @Override
@@ -93,8 +92,8 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
     }
 
     @Override
-    public PersonView generateView(ReadableBoard fullState) {
-        return PersonView.from(this, fullState);
+    public RelativePositionedView generateView(ReadableBoard fullState) {
+        return RelativePositionedView.from(this, fullState);
     }
 
     @Override

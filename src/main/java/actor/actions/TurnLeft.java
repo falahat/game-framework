@@ -15,6 +15,6 @@ public class TurnLeft implements Action<ReadableBoard, WritableBoard> {
     @Override
     public double updateState(WritableBoard currentGameState) {
         walker.setDirection(walker.getDirection().counterClockwise());
-        return 0;
+        return -1; // slight penalty for wasting time
     }
 }

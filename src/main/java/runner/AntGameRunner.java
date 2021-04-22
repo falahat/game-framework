@@ -1,7 +1,9 @@
 package runner;
 
 import actor.*;
-import state.PersonView;
+import state.Direction;
+import state.AbsolutePositionedView;
+import state.RelativePositionedView;
 import state.board.ReadableBoard;
 import state.board.GameBoard;
 import state.board.WritableBoard;
@@ -28,24 +30,44 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
             int rx = GameCanvas.TILE_SIZE * point.x;
             int ry = GameCanvas.TILE_SIZE * point.y;
 
+            int cx = rx + GameCanvas.TILE_SIZE/2;
+            int cy = ry + GameCanvas.TILE_SIZE/2;
+
             boolean isScoring = player instanceof SmartPerson;
             if (isScoring) {
                 // (255, 0, 0) => (0, 255, 0)
-                double maxValue = 20;
-                PersonView hypothetical = PersonView.from(player, board, point);
-                double scoreForLocation = ((SmartPerson) player).getMaximumEstimateScore(hypothetical);
-                int rVal = (int) (255 * Math.min(1, scoreForLocation/maxValue));
+                double MAX_SCORE = 250;
+                Direction[] possibleDirections = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+                int[] angles = new int[]{90, 0, 270, 180};
 
-                g.setColor(new Color(255-rVal, rVal, 0));
-                g.drawString(String.format("%f", scoreForLocation), rx, ry);
+                double bestScore = Integer.MIN_VALUE;
+                for (int i=0; i < possibleDirections.length; i++) {
+                    Direction possibleDir = possibleDirections[i];
+                    int centerAngle = angles[i];
+
+                    RelativePositionedView hypothetical = RelativePositionedView.from(player, board, point, possibleDir);
+                    double scoreForLocation = ((SmartPerson) player).getMaximumEstimateScore(hypothetical);
+
+                    bestScore = Math.max(bestScore, scoreForLocation);
+
+                    int rVal = (int) (255 * Math.max(0, Math.min(1, scoreForLocation/MAX_SCORE)));
+                    Color scoreColor = new Color(255-rVal, rVal, 0);
+                    g.setColor(scoreColor);
+                    g.fillArc(rx + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
+                            ry + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
+                            GameCanvas.INNER_TILE_SIZE, GameCanvas.INNER_TILE_SIZE, (centerAngle-45)%365, 90);
+                }
+                g.drawRect(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
+                g.setColor(Color.black);
+                g.drawString(String.format("%.2f", bestScore), rx+2, ry+10);
             } else {
                 boolean isVisited = player.hasVisited(point);
                 g.setColor(isVisited ? Color.green : Color.gray);
             }
-            g.fillOval(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
+
 
             g.setColor(Color.green);
-            board.members(point).forEach(boardObj -> boardObj.render(g, rx, ry));
+            board.members(point).forEach(boardObj -> boardObj.render(g, cx, cy));
         });
     }
 

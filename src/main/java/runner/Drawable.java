@@ -17,7 +17,7 @@ public interface Drawable {
     default void render(Graphics g, int x, int y) {
         try {
             BufferedImage toDraw = getImage();
-            toDraw = Thumbnails.of(toDraw).size(2*toDraw.getWidth(), 2*toDraw.getHeight()).asBufferedImage();
+//            toDraw = Thumbnails.of(toDraw).size(2*toDraw.getWidth(), 2*toDraw.getHeight()).asBufferedImage();
 
             g.drawImage(toDraw, x, y, null);
         } catch (IOException e) {
