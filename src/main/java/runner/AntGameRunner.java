@@ -52,6 +52,8 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
 
                     int rVal = (int) (255 * Math.max(0, Math.min(1, scoreForLocation/MAX_SCORE)));
                     Color scoreColor = new Color(255-rVal, rVal, 0);
+//                    scoreColor = possibleDir == Direction.NORTH ? Color.cyan : scoreColor;
+
                     g.setColor(scoreColor);
                     g.fillArc(rx + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
                             ry + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,

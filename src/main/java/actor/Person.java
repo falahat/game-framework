@@ -116,13 +116,11 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
         if (spriteSheet == null) {
             spriteSheet = loadImage("/hero1.png");
         }
-        // down
-        // side (right)
-        // up
+
         switch (getDirection()) {
-            case NORTH:
-                return spriteSheet.getSubimage(0, 0, 32, 32);
             case SOUTH:
+                return spriteSheet.getSubimage(0, 0, 32, 32);
+            case NORTH:
                 return spriteSheet.getSubimage(0, 2*32, 32, 32);
             case WEST:
             case EAST: // TODO: flip
