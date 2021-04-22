@@ -36,7 +36,6 @@ public class Point2D {
 
     public Point2D transform(Direction direction) {
         switch (direction) {
-
             case NORTH:
                 return transform(0, 1);
             case SOUTH:

@@ -4,6 +4,7 @@ import actor.Action;
 import actor.Actor;
 import actor.Board2DActor;
 import state.board.ReadableBoard;
+import state.board.GameBoard;
 import state.board.WritableBoard;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     private WritableBoard board;
     private final List<Board2DActor> actors;
 
-    public AntGameRunner(WritableBoard board, List<Board2DActor> actors) {
+    public AntGameRunner(GameBoard board, List<Board2DActor> actors) {
         // Assume actors have already been inserted on the board.
         this.board = board;
         this.actors = actors;
@@ -21,9 +22,7 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
 
     @Override
     public List<Actor<ReadableBoard, WritableBoard>> getActorsForCurrentTurn() {
-        List<Actor<ReadableBoard, WritableBoard>> result = new ArrayList<>();
-        actors.forEach(a -> result.add(a));
-        return result;
+        return new ArrayList<>(actors);
     }
 
     @Override
