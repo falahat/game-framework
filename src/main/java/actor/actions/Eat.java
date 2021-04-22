@@ -12,7 +12,7 @@ public class Eat implements Action<ReadableBoard, WritableBoard> {
     }
 
     @Override
-    public void updateState(WritableBoard currentGameState) {
+    public double updateState(WritableBoard currentGameState) {
         Point2D location = currentGameState.find(eater)
                 .orElseThrow(() -> new IllegalStateException("Actor did not exist"));
 
@@ -24,10 +24,7 @@ public class Eat implements Action<ReadableBoard, WritableBoard> {
 
         // Eat / remove the sugar
         currentGameState.remove(food);
-    }
 
-    @Override
-    public double getImmediateReward() {
-        return 100; // assumes you will succeed
+        return 100; // assuming we reached here, we were able to eat the food
     }
 }

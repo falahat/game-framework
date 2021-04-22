@@ -17,12 +17,8 @@ public class TurnRight implements Action<ReadableBoard, WritableBoard> {
     }
 
     @Override
-    public void updateState(WritableBoard currentGameState) {
+    public double updateState(WritableBoard currentGameState) {
         walker.setDirection(walker.getDirection().clockwise());
-    }
-
-    @Override
-    public double getImmediateReward() {
         return 0;
     }
 }

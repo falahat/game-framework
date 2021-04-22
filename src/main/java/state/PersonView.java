@@ -9,35 +9,33 @@ import state.board.ReadableBoard;
 import java.util.Optional;
 
 public class PersonView implements BoardView {
-    private final Person actor;
-    private final ReadableBoard rawBoard;
+    private final boolean isBlockedAhead;
+    private final boolean isAboveFood;
 
-    public PersonView(ReadableBoard board, Person actor) {
-        this.rawBoard = board;
-        this.actor = actor;
+    public PersonView(boolean isBlockedAhead, boolean isAboveFood) {
+        this.isBlockedAhead = isBlockedAhead;
+        this.isAboveFood = isAboveFood;
     }
 
     public boolean isBlockedAhead() {
-        Optional<Point2D> currentLocation = rawBoard.find(actor);
+        return isBlockedAhead;
+    }
+
+    public boolean isAboveFood() {
+        return isAboveFood;
+    }
+
+    public static PersonView from(Person actor, ReadableBoard board) {
+        Optional<Point2D> currentLocation = board.find(actor);
         if (currentLocation.isEmpty()) {
             throw new IllegalStateException("This actor does not exist in the board");
         }
 
         Point2D ahead = currentLocation.get().transform(actor.getDirection());
 
-        if (!rawBoard.locations().contains(ahead)) {
-            return true;
-        }
+        boolean isAboveFood = board.members(currentLocation.get()).stream().anyMatch(obj -> obj instanceof Bread);
+        boolean isBlocked = !board.locations().contains(ahead) || board.members(ahead).stream().anyMatch(BoardObject::isBlocking);
 
-        return rawBoard.members(ahead).stream().anyMatch(BoardObject::isBlocking);
-    }
-
-    public boolean isAboveFood() {
-        Optional<Point2D> currentLocation = rawBoard.find(actor);
-        if (currentLocation.isEmpty()) {
-            throw new IllegalStateException("This actor does not exist in the board");
-        }
-
-        return rawBoard.members(currentLocation.get()).stream().anyMatch(obj -> obj instanceof Bread);
+        return new PersonView(isBlocked, isAboveFood);
     }
 }

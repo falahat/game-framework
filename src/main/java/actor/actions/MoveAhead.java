@@ -17,7 +17,7 @@ public class MoveAhead implements Action<ReadableBoard, WritableBoard> {
     }
 
     @Override
-    public void updateState(WritableBoard currentGameState) {
+    public double updateState(WritableBoard currentGameState) {
         Direction toMove = walker.getDirection();
         Optional<Point2D> currentLocation = currentGameState.find(walker);
         if (currentLocation.isEmpty()) {
@@ -26,10 +26,12 @@ public class MoveAhead implements Action<ReadableBoard, WritableBoard> {
 
         Point2D newLocation = currentLocation.get().transform(toMove);
         currentGameState.move(walker, newLocation);
-    }
 
-    @Override
-    public double getImmediateReward() {
-        return 0;
+        if (walker.hasVisited(newLocation)) {
+            return 0;
+        } else {
+            walker.markAsVisited(newLocation);
+            return 1; // slight boost for seeing an unvisited location
+        }
     }
 }

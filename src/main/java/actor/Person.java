@@ -26,10 +26,6 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
         this.visited = new HashSet<>();
     }
 
-    public boolean hasVisited(Point2D location) {
-        return visited.contains(location);
-    }
-
     @Override
     public Action<ReadableBoard, WritableBoard> decide(ReadableBoard currentState,
                                                        Collection<Action<ReadableBoard, WritableBoard>> allowedActions) {
@@ -80,14 +76,22 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
     }
 
     @Override
+    public void markAsVisited(Point2D location) {
+        visited.add(location);
+    }
+
+    @Override
+    public boolean hasVisited(Point2D location) {
+        return visited.contains(location);
+    }
+
+    @Override
     public void learn(Action<ReadableBoard, WritableBoard> decided, ReadableBoard firstState, ReadableBoard nextState) {
         // TODO: implement
-        Optional<Point2D> newLocation = nextState.find(this);
-        newLocation.ifPresent(visited::add);
     }
 
     private PersonView getVisibleState(ReadableBoard fullState) {
-        return new PersonView(fullState, this);
+        return PersonView.from(this, fullState);
     }
 
     @Override

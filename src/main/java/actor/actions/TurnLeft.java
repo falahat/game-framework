@@ -13,12 +13,8 @@ public class TurnLeft implements Action<ReadableBoard, WritableBoard> {
     }
 
     @Override
-    public void updateState(WritableBoard currentGameState) {
+    public double updateState(WritableBoard currentGameState) {
         walker.setDirection(walker.getDirection().counterClockwise());
-    }
-
-    @Override
-    public double getImmediateReward() {
         return 0;
     }
 }
