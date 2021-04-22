@@ -31,7 +31,7 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
             int ry = GameCanvas.TILE_SIZE * point.y;
 
             boolean isVisited = player.hasVisited(point);
-            
+
             g.setColor(isVisited ? Color.green : Color.gray);
             g.fillOval(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
 
@@ -51,10 +51,10 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     }
 
     @Override
-    public WritableBoard calculateNextState(ReadableBoard previousState, List<Action<ReadableBoard, WritableBoard>> chosen) {
+    public WritableBoard calculateNextState(ReadableBoard previousState, List<Action<ReadableBoard, WritableBoard>> chosen, List<Double> rewardsPerAction) {
         // later, we can make changes which don't depend on an action, such as increasing hunger by 1 each round.
         WritableBoard nextState = previousState.mutableCopy();
-        chosen.forEach(action -> action.updateState(nextState));
+        chosen.forEach(action -> rewardsPerAction.add(action.updateState(nextState)));
         return nextState;
     }
 

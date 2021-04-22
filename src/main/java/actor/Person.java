@@ -2,9 +2,9 @@ package actor;
 
 import actor.actions.Eat;
 import actor.actions.MoveAhead;
-import actor.actions.TurnLeft;
 import actor.actions.TurnRight;
 import runner.Drawable;
+import state.GameStateView;
 import state.PersonView;
 import state.Direction;
 import state.Point2D;
@@ -27,7 +27,7 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
     }
 
     @Override
-    public Action<ReadableBoard, WritableBoard> decide(ReadableBoard currentState,
+    public Action<ReadableBoard, WritableBoard> decide(GameStateView currentState,
                                                        Collection<Action<ReadableBoard, WritableBoard>> allowedActions) {
         // Ant can only see the block in front of it
         Action<ReadableBoard, WritableBoard> decided = null;
@@ -53,8 +53,8 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
     }
 
     @Override
-    public Collection<Action<ReadableBoard, WritableBoard>> getAllowedActions(ReadableBoard currentView) {
-        PersonView visible = getVisibleState(currentView);
+    public Collection<Action<ReadableBoard, WritableBoard>> getAllowedActions(GameStateView currentView) {
+        PersonView visible = (PersonView) currentView;
 
         List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
 
@@ -86,11 +86,14 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
     }
 
     @Override
-    public void learn(Action<ReadableBoard, WritableBoard> decided, ReadableBoard firstState, ReadableBoard nextState) {
+    public void learn(Action<ReadableBoard, WritableBoard> decided,
+                      GameStateView firstState,
+                      GameStateView nextState, double immediateReward) {
         // TODO: implement
     }
 
-    private PersonView getVisibleState(ReadableBoard fullState) {
+    @Override
+    public PersonView generateView(ReadableBoard fullState) {
         return PersonView.from(this, fullState);
     }
 
