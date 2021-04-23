@@ -25,6 +25,6 @@ public class Eat implements Action<ReadableBoard, WritableBoard> {
         // Eat / remove the sugar
         currentGameState.remove(food);
 
-        return 1000; // assuming we reached here, we were able to eat the food
+        return 200; // assuming we reached here, we were able to eat the food
     }
 }

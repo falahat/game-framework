@@ -55,15 +55,14 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
         AbsolutePositionedView visible = (AbsolutePositionedView) currentView;
 
         List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
-
+        actions.add(new TurnLeft(this));
+        actions.add(new TurnRight(this));
         if (visible.isAboveFood()) {
             actions.add(new Eat(this));
-        } else {
-            if (!visible.isBlockedAhead()) {
-                actions.add(new MoveAhead(this));
-            }
-            actions.add(new TurnRight(this));
+        } else if (!visible.isBlockedAhead()) {
+            actions.add(new MoveAhead(this));
         }
+
         // Can attempt to go forward, but might be blocked
         // If we are 100% sure the tile in front is blocked, we will not go forward
         return actions;

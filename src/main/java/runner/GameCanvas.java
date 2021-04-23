@@ -16,6 +16,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -35,16 +36,21 @@ public class GameCanvas extends Canvas implements Runnable {
     private Thread thread;
 
     AntGameRunner gameRunner;
+    GameBoard gameBoard;
+    SmartPerson player;
 
     public void init(){
         requestFocus();
-        GameBoard gameBoard = new GameBoard(GRAPH_WIDTH, GRAPH_WIDTH);
+        gameBoard = generateGameBoard();
 
-        List<Board2DActor> actors = new ArrayList<>();
-        SmartPerson player = new SmartPerson(Direction.NORTH);
-        actors.add(player);
-
+        player = new SmartPerson(Direction.NORTH);
         gameBoard.insert(player, new Point2D(5, 5));
+
+        gameRunner = new AntGameRunner(gameBoard, player, Collections.singletonList(player));
+    }
+
+    private GameBoard generateGameBoard() {
+        GameBoard gameBoard = new GameBoard(GRAPH_WIDTH, GRAPH_WIDTH);
 
         Random random = new Random();
         for (int x = 0; x < GRAPH_WIDTH; x++) {
@@ -56,8 +62,7 @@ public class GameCanvas extends Canvas implements Runnable {
                 }
             }
         }
-
-        gameRunner = new AntGameRunner(gameBoard, player, actors);
+        return gameBoard;
     }
 
 
@@ -90,7 +95,19 @@ public class GameCanvas extends Canvas implements Runnable {
     public void run(){
         init();
 
+        int i = 1;
+
         while(running){
+            i = ((i + 1) % 500);
+            if (i == 0) {
+                gameBoard = generateGameBoard();
+
+                player.clearAllVisited();
+                player.setDirection(Direction.NORTH);
+                gameBoard.insert(player, new Point2D(5, 5));
+
+                gameRunner = new AntGameRunner(gameBoard, player, Collections.singletonList(player));
+            }
             tick();
             render();
         }

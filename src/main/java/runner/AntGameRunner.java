@@ -36,7 +36,7 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
             boolean isScoring = player instanceof SmartPerson;
             if (isScoring) {
                 // (255, 0, 0) => (0, 255, 0)
-                double MAX_SCORE = 250;
+                double MAX_SCORE = 500;
                 Direction[] possibleDirections = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
                 int[] angles = new int[]{90, 0, 270, 180};
 
@@ -52,16 +52,17 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
 
                     int rVal = (int) (255 * Math.max(0, Math.min(1, scoreForLocation/MAX_SCORE)));
                     Color scoreColor = new Color(255-rVal, rVal, 0);
-//                    scoreColor = possibleDir == Direction.NORTH ? Color.cyan : scoreColor;
 
                     g.setColor(scoreColor);
                     g.fillArc(rx + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
                             ry + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
                             GameCanvas.INNER_TILE_SIZE, GameCanvas.INNER_TILE_SIZE, (centerAngle-45)%365, 90);
                 }
+
                 g.drawRect(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
                 g.setColor(Color.black);
                 g.drawString(String.format("%.2f", bestScore), rx+2, ry+10);
+
             } else {
                 boolean isVisited = player.hasVisited(point);
                 g.setColor(isVisited ? Color.green : Color.gray);

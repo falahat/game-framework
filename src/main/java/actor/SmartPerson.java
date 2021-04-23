@@ -1,15 +1,13 @@
 package actor;
 
 import actor.algorithms.MarkovDecisionProcess;
-import actor.algorithms.QALearner;
 import state.Direction;
 import state.GameStateView;
 import state.RelativePositionedView;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 public class SmartPerson extends Person {
 
