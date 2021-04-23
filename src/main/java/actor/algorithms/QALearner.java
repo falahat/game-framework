@@ -1,5 +1,7 @@
-package actor;
+package actor.algorithms;
 
+import actor.Action;
+import actor.Trainable;
 import state.GameStateView;
 import state.RelativePositionedView;
 import state.board.ReadableBoard;

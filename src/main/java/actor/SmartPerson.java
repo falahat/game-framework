@@ -1,5 +1,6 @@
 package actor;
 
+import actor.algorithms.QALearner;
 import state.Direction;
 import state.GameStateView;
 import state.RelativePositionedView;
@@ -7,7 +8,6 @@ import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SmartPerson extends Person {
 
