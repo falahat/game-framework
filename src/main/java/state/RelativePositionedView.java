@@ -1,7 +1,10 @@
 package state;
 
+import actor.Board2DActor;
 import actor.Person;
 import state.PersonView.Sensed;
+import state.board.BoardObject;
+import state.board.BoardWalker;
 import state.board.ReadableBoard;
 
 import java.util.HashMap;
@@ -16,13 +19,13 @@ public class RelativePositionedView extends AbsolutePositionedView {
         super(Direction.NORTH, relativeNeighbors, currentTile, isAheadTileVisited);
     }
 
-    public static RelativePositionedView from(Person actor, ReadableBoard board) {
+    public static RelativePositionedView from(BoardWalker actor, ReadableBoard board) {
         Point2D location =  board.find(actor).orElseThrow(() -> new IllegalStateException("Unable to find location"));
 
         return from(actor, board, location, actor.getDirection());
     }
 
-    public static RelativePositionedView from(Person actor, ReadableBoard board, Point2D currentLocation, Direction direction) {
+    public static RelativePositionedView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation, Direction direction) {
         Map<Direction, Sensed> absoluteNeighbors = new HashMap<>();
         for (Direction dir : Direction.values()) {
             Point2D neighborPoint = currentLocation.transform(dir);

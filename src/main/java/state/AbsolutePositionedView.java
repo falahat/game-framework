@@ -2,7 +2,9 @@ package state;
 
 import actor.Person;
 import state.PersonView.Sensed;
+import state.board.BoardObject;
 import state.board.BoardView;
+import state.board.BoardWalker;
 import state.board.ReadableBoard;
 
 import java.util.HashMap;
@@ -40,7 +42,7 @@ public class AbsolutePositionedView implements BoardView {
         return currentTile == Sensed.FOOD;
     }
 
-    public static AbsolutePositionedView from(Person actor, ReadableBoard board) {
+    public static AbsolutePositionedView from(BoardWalker actor, ReadableBoard board) {
         Optional<Point2D> currentLocation = board.find(actor);
         if (currentLocation.isEmpty()) {
             throw new IllegalStateException("This actor does not exist in the board");
@@ -49,11 +51,11 @@ public class AbsolutePositionedView implements BoardView {
         return from(actor, board, currentLocation.get());
     }
 
-    public static AbsolutePositionedView from(Person actor, ReadableBoard board, Point2D currentLocation) {
+    public static AbsolutePositionedView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation) {
         return from(actor, board, currentLocation, actor.getDirection());
     }
 
-    public static AbsolutePositionedView from(Person actor, ReadableBoard board, Point2D currentLocation, Direction direction) {
+    public static AbsolutePositionedView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation, Direction direction) {
         Map<Direction, Sensed> neighbors = new HashMap<>();
         for (Direction dir : Direction.values()) {
             Point2D neighborPoint = currentLocation.transform(dir);
