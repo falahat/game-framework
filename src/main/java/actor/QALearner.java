@@ -8,6 +8,13 @@ import state.board.WritableBoard;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This is a model-free aproach to estimating state values and which actions are best for a given state.
+ * It approximates a value for each state/action pair based on the immediate reward of choosing
+ * that action and the value of the state that we end up in.
+ *
+ * {@link https://en.wikipedia.org/wiki/Q-learning}
+ */
 public class QALearner implements Trainable<ReadableBoard, WritableBoard> {
     public static final double DEFAULT_SCORE = 50;
     public static final double LEARNING_RATE = 0.12;
