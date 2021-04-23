@@ -50,8 +50,8 @@ public class RelativePositionedView extends AbsolutePositionedView {
                     break;
             }
 
-            relativeNeighbors.remove(Direction.SOUTH); // can't see behind you
-            relativeNeighbors.remove(Direction.WEST);
+//            relativeNeighbors.remove(Direction.SOUTH); // can't see behind you
+//            relativeNeighbors.remove(Direction.WEST);
 
             relativeNeighbors.put(newDir, sensed);
         }

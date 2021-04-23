@@ -28,7 +28,7 @@ public class MoveAhead implements Action<ReadableBoard, WritableBoard> {
         currentGameState.move(walker, newLocation);
 
         if (walker.hasVisited(newLocation)) {
-            return -4; // penalty for going the same places, encourage the robot to spin around?
+            return -10; // penalty for going the same places, encourage the robot to spin around?
         } else {
             walker.markAsVisited(newLocation);
             return 1; // slight boost for seeing an unvisited location
