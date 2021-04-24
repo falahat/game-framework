@@ -2,6 +2,7 @@ package runner;
 
 import actor.Board2DActor;
 import actor.Person;
+import actor.Skeleton;
 import actor.SmartPerson;
 import state.Direction;
 import state.Point2D;
@@ -25,7 +26,7 @@ public class GameCanvas extends Canvas implements Runnable {
 
     public static final int NUM_TILES = 16;
     public static final int TILE_SIZE = 100;
-    public static final int INNER_TILE_SIZE = TILE_SIZE/3;
+    public static final int INNER_TILE_SIZE = 75;
     public static final int WIDTH = NUM_TILES * TILE_SIZE;
     public static final int HEIGHT = NUM_TILES * TILE_SIZE;
     public static final int SCALE = 1;
@@ -44,7 +45,11 @@ public class GameCanvas extends Canvas implements Runnable {
         gameBoard = generateGameBoard();
 
         player = new SmartPerson(Direction.NORTH);
+
+        Skeleton enemy = new Skeleton(Direction.NORTH);
+
         gameBoard.insert(player, new Point2D(5, 5));
+        gameBoard.insert(enemy, new Point2D(4, 4));
 
         gameRunner = new AntGameRunner(gameBoard, player, Collections.singletonList(player));
     }
@@ -57,7 +62,7 @@ public class GameCanvas extends Canvas implements Runnable {
             for (int y = 0; y < GRAPH_WIDTH; y++) {
                 if (random.nextBoolean()) {
                     gameBoard.insert(new Bread(), new Point2D(x, y));
-                } else if (random.nextBoolean() && random.nextBoolean()) {
+                } else if (random.nextBoolean()) {
                     gameBoard.insert(new Rock(), new Point2D(x, y));
                 }
             }
@@ -126,7 +131,7 @@ public class GameCanvas extends Canvas implements Runnable {
         }
 
         Graphics g = bs.getDrawGraphics();
-        g.fillRect(0, 0, WIDTH, HEIGHT);
+//        g.fillRect(0, 0, WIDTH, HEIGHT);
         gameRunner.render(g);
 
         g.dispose();

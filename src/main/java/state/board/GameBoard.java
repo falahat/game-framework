@@ -98,6 +98,11 @@ public class GameBoard implements ReadableBoard, WritableBoard {
     }
 
     @Override
+    public GameMapGraph getGraph() {
+        return mapGraph;
+    }
+
+    @Override
     public List<Point2D> neighbors(Point2D center) {
         assertLocationExists(center);
 

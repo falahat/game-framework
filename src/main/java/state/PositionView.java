@@ -1,11 +1,8 @@
 package state;
 
-import actor.Person;
+import algorithms.traverse.BreadthFirstTraversal;
 import state.PersonView.Sensed;
-import state.board.BoardObject;
-import state.board.BoardView;
-import state.board.BoardWalker;
-import state.board.ReadableBoard;
+import state.board.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,21 +13,23 @@ import static state.PersonView.Sensed.BLOCKED;
 import static state.PersonView.Sensed.FOOD;
 import static state.PersonView.sense;
 
-public class AbsolutePositionedView implements BoardView {
+public class PositionView implements BoardView {
     final Direction personDirection;
     final Map<Direction, Sensed> neighbors;
     final Sensed currentTile;
     final boolean isAheadTileVisited;
-
-    public AbsolutePositionedView(Direction personDirection,
-                                  Map<Direction, Sensed> neighbors,
-                                  Sensed currentTile,
-                                  boolean isAheadTileVisited) {
+    final Direction directionOfClosestFood;
+    public PositionView(Direction personDirection,
+                        Map<Direction, Sensed> neighbors,
+                        Sensed currentTile,
+                        boolean isAheadTileVisited,
+                        Direction directionOfClosestFood) {
 
         this.personDirection = personDirection;
         this.neighbors = neighbors;
         this.currentTile = currentTile;
         this.isAheadTileVisited = isAheadTileVisited;
+        this.directionOfClosestFood = directionOfClosestFood;
     }
 
     public boolean isBlockedAhead() {
@@ -42,20 +41,20 @@ public class AbsolutePositionedView implements BoardView {
         return currentTile == Sensed.FOOD;
     }
 
-    public static AbsolutePositionedView from(BoardWalker actor, ReadableBoard board) {
+    public static PositionView from(BoardWalker actor, ReadableBoard board, boolean relative) {
         Optional<Point2D> currentLocation = board.find(actor);
         if (currentLocation.isEmpty()) {
             throw new IllegalStateException("This actor does not exist in the board");
         }
 
-        return from(actor, board, currentLocation.get());
+        return from(actor, board, currentLocation.get(), relative);
     }
 
-    public static AbsolutePositionedView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation) {
-        return from(actor, board, currentLocation, actor.getDirection());
+    public static PositionView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation, boolean relative) {
+        return from(actor, board, currentLocation, actor.getDirection(), relative);
     }
 
-    public static AbsolutePositionedView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation, Direction direction) {
+    public static PositionView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation, Direction direction, boolean relative) {
         Map<Direction, Sensed> neighbors = new HashMap<>();
         for (Direction dir : Direction.values()) {
             Point2D neighborPoint = currentLocation.transform(dir);
@@ -66,7 +65,32 @@ public class AbsolutePositionedView implements BoardView {
 
         boolean isAheadTileVisited = actor.hasVisited(currentLocation.transform(direction));
 
-        return new AbsolutePositionedView(direction, neighbors, currentTile, isAheadTileVisited);
+        Point2D closestFood = null;
+        for (Point2D point : new BreadthFirstTraversal<>(board.getGraph())) {
+            if (board.members(point).stream().anyMatch(boardObj -> boardObj instanceof Bread)) {
+                closestFood = point;
+                break;
+            }
+        }
+
+        Direction directionClosestFood = closestFood == null ? Direction.NORTH : currentLocation.directionTo(closestFood);
+
+
+        while (direction != Direction.NORTH) {
+            direction = direction.clockwise();
+            directionClosestFood = directionClosestFood.clockwise();
+
+            Map<Direction, Sensed> newNeighbors = new HashMap<>();
+
+            for (Direction currDir : neighbors.keySet()) {
+                Sensed sensed = neighbors.get(currDir);
+                newNeighbors.put(currDir.clockwise(), sensed);
+            }
+
+            neighbors = newNeighbors;
+        }
+
+        return new PositionView(direction, neighbors, currentTile, isAheadTileVisited, directionClosestFood);
     }
 
     @Override
@@ -77,17 +101,18 @@ public class AbsolutePositionedView implements BoardView {
 
         return Objects.hash(this.currentTile,
                 this.isAheadTileVisited,
-                this.personDirection
+                this.personDirection,
+                this.directionOfClosestFood
         );
         // Note that neighbors are not included in the hash, I didn't have time to handle hashing a map.
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof AbsolutePositionedView))
+        if (!(obj instanceof PositionView))
             return false;
 
-        AbsolutePositionedView other = (AbsolutePositionedView) obj;
+        PositionView other = (PositionView) obj;
 
         if (this.currentTile == Sensed.FOOD && other.currentTile == FOOD) {
             return true;
@@ -102,7 +127,8 @@ public class AbsolutePositionedView implements BoardView {
 
         return Objects.equals(this.currentTile, other.currentTile)
                 && Objects.equals(this.isAheadTileVisited, other.isAheadTileVisited)
-                && Objects.equals(this.personDirection, other.personDirection);
+                && Objects.equals(this.personDirection, other.personDirection)
+                && Objects.equals(this.directionOfClosestFood, other.directionOfClosestFood);
     }
 //
 //    @Override

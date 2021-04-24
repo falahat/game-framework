@@ -2,8 +2,8 @@ package actor.algorithms;
 
 import actor.Action;
 import actor.Trainable;
+import state.PositionView;
 import state.GameStateView;
-import state.RelativePositionedView;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
@@ -23,7 +23,7 @@ public class QALearner implements Trainable<ReadableBoard, WritableBoard> {
     public static final double DISCOUNT_RATE = 0.95;
     public static final boolean ALWAYS_PICK_BEST_ACTION = false;
 
-    private final Map<RelativePositionedView, Map<String, Double>> valueOfActionPerState;
+    private final Map<PositionView, Map<String, Double>> valueOfActionPerState;
 
     public QALearner() {
         this.valueOfActionPerState = new HashMap<>();
@@ -34,7 +34,7 @@ public class QALearner implements Trainable<ReadableBoard, WritableBoard> {
         Random random = new Random();
 
         List<Action<ReadableBoard, WritableBoard>> sorted = allowedActions.stream()
-                .sorted(Comparator.comparing(action -> random.nextDouble()-this.getEstimatedActionScore((RelativePositionedView) currentState, action)))
+                .sorted(Comparator.comparing(action -> random.nextDouble()-this.getEstimatedActionScore((PositionView) currentState, action)))
                 .collect(Collectors.toList());
 
         for (int i = 0; i < sorted.size()-1; i++) {
@@ -51,25 +51,25 @@ public class QALearner implements Trainable<ReadableBoard, WritableBoard> {
                       GameStateView firstState,
                       GameStateView nextState, double immediateReward) {
         // we were at "firstState" and chose "decided".
-        double originalEstimate = getEstimatedActionScore((RelativePositionedView) firstState, decided);
+        double originalEstimate = getEstimatedActionScore((PositionView) firstState, decided);
 
-        double maxValueFromNewState = getEstimatedStateValue((RelativePositionedView) nextState);
+        double maxValueFromNewState = getEstimatedStateValue((PositionView) nextState);
 
         double estimateDiff = (immediateReward + DISCOUNT_RATE * maxValueFromNewState) - originalEstimate;
         double newEstimate = originalEstimate + LEARNING_RATE * estimateDiff;
 
-        this.valueOfActionPerState.putIfAbsent((RelativePositionedView) firstState, new HashMap<>());
+        this.valueOfActionPerState.putIfAbsent((PositionView) firstState, new HashMap<>());
         this.valueOfActionPerState.get(firstState).put(decided.uniqueActionType(), newEstimate);
     }
 
-    public double getEstimatedActionScore(RelativePositionedView state, Action chosen) {
+    public double getEstimatedActionScore(PositionView state, Action chosen) {
         String actionKey = chosen.uniqueActionType();
         return valueOfActionPerState
                 .getOrDefault(state, Collections.emptyMap())
                 .getOrDefault(actionKey, DEFAULT_SCORE);
     }
 
-    public double getEstimatedStateValue(RelativePositionedView state) {
+    public double getEstimatedStateValue(PositionView state) {
         return valueOfActionPerState
                 .getOrDefault(state, Collections.emptyMap()).values().stream().mapToDouble(a -> a)
                 .max()

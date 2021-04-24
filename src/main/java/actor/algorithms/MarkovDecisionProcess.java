@@ -3,7 +3,6 @@ package actor.algorithms;
 import actor.Action;
 import actor.Trainable;
 import state.GameStateView;
-import state.RelativePositionedView;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
@@ -18,13 +17,13 @@ import java.util.stream.Collectors;
  * https://en.wikipedia.org/wiki/Markov_decision_process
  */
 public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableBoard> {
-    public static final double LEARNING_RATE = 0.12;
+    public static final double LEARNING_RATE = 0.20;
     public static final double DISCOUNT_RATE = 0.95;
     public static final boolean ALWAYS_PICK_BEST_ACTION = false;
     public static final int INITIAL_STATE_VALUE = 100;
     public static final int MINIMUM_DATAPOINTS = 1;
 
-    private final int counter = 0;
+    private int counter = 0;
 
     // This is one of the ugliest things I've created in recent memory:
     // for each game state, it stores a map of possible actions.
@@ -35,6 +34,7 @@ public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableB
     // TODO: this assumes the reward is the same for all state,nextState,action tuples
     Map<GameStateView, Map<String, Map<GameStateView, Double>>> rewards;
     Map<GameStateView, Double> estimateStateValues; // stores the estimate best values
+    Set<GameStateView> seenStates = new HashSet<>();
 
     public MarkovDecisionProcess() {
         this.outcomes = new HashMap<>();
@@ -51,7 +51,7 @@ public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableB
                 .collect(Collectors.toList());
 
         for (int i = 0; i < sorted.size()-1; i++) {
-            if (ALWAYS_PICK_BEST_ACTION || random.nextBoolean() || random.nextBoolean() || random.nextBoolean()) {
+            if (ALWAYS_PICK_BEST_ACTION || random.nextBoolean() || random.nextBoolean()) {
                 return sorted.get(i);
             }
         }
@@ -76,13 +76,22 @@ public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableB
         double currReward = rewards.get(firstView).get(decided.uniqueActionType()).getOrDefault(nextView, 0.0);
         if (currReward != immediateReward) {
 //            throw new IllegalStateException("Unexpected, reward value changed for state transition");
-            currReward = immediateReward;
+            currReward = (1-LEARNING_RATE)*currReward + LEARNING_RATE*immediateReward;
         }
         rewards.get(firstView).get(decided.uniqueActionType()).put(nextView, currReward);
 
         // update value of og state
-        this.estimateStateValues.put(firstView, calculateMaximumScore(firstView));
+//        this.estimateStateValues.put(firstView, calculateMaximumScore(firstView));
 //        this.estimateStateValues.put(nextView, calculateMaximumScore(nextView));
+        seenStates.add(firstView);
+
+        counter++;
+        if ((counter % 100) == 0) {
+            counter = 1;
+            for (GameStateView view : seenStates) {
+                this.estimateStateValues.put(view, calculateMaximumScore((view)));
+            }
+        }
     }
 
     private double probability(GameStateView start, GameStateView next, String actionKey) {

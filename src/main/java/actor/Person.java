@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
+import static runner.AntGameRunner.RELATIVE_POSITION;
+
 public class Person implements Board2DActor, BoardWalker, Drawable {
     private BufferedImage spriteSheet;
     private Direction direction;
@@ -52,7 +54,7 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
 
     @Override
     public Collection<Action<ReadableBoard, WritableBoard>> getAllowedActions(GameStateView currentView) {
-        AbsolutePositionedView visible = (AbsolutePositionedView) currentView;
+        PositionView visible = (PositionView) currentView;
 
         List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
         actions.add(new TurnLeft(this));
@@ -91,8 +93,8 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
     }
 
     @Override
-    public RelativePositionedView generateView(ReadableBoard fullState) {
-        return RelativePositionedView.from(this, fullState);
+    public PositionView generateView(ReadableBoard fullState) {
+        return PositionView.from(this, fullState, RELATIVE_POSITION);
     }
 
     @Override
