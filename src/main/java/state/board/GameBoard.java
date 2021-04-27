@@ -12,12 +12,9 @@ public class GameBoard implements ReadableBoard, WritableBoard {
     private final GameMapGraph mapGraph;
     private final Map<BoardObject, BoardTile> memberToTile;
 
-    private Map<Actor, Double> scoresForRound;
-
     public GameBoard() {
         this.memberToTile = new HashMap<>();
         this.mapGraph = new GameMapGraph();
-        this.scoresForRound = new HashMap<>();
     }
 
     public GameBoard(int boardWidth, int boardHeight) {
