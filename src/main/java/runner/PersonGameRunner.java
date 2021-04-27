@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
-public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
+public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     private static final double MAX_SCORE = 300;
     public static final boolean RELATIVE_POSITION = true;
     public static Color BACKGROUND = Color.lightGray;
@@ -27,7 +27,7 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
 
     private BufferedImage cachedRender = null;
 
-    public AntGameRunner(GameBoard board, Person player, List<Board2DActor> actors) {
+    public PersonGameRunner(GameBoard board, Person player, List<Board2DActor> actors) {
         // Assume actors have already been inserted on the board.
         this.board = board;
         this.actors = actors;

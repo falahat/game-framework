@@ -1,7 +1,5 @@
 package runner;
 
-import actor.Board2DActor;
-import actor.Person;
 import actor.Skeleton;
 import actor.SmartPerson;
 import state.Direction;
@@ -16,9 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 // credit to https://code-knowledge.com/java-create-game-introduction/
@@ -36,7 +32,7 @@ public class GameCanvas extends Canvas implements Runnable {
     private boolean running = false;
     private Thread thread;
 
-    AntGameRunner gameRunner;
+    PersonGameRunner gameRunner;
     GameBoard gameBoard;
     SmartPerson player;
 
@@ -51,7 +47,7 @@ public class GameCanvas extends Canvas implements Runnable {
         gameBoard.insert(player, new Point2D(5, 5));
         gameBoard.insert(enemy, new Point2D(4, 4));
 
-        gameRunner = new AntGameRunner(gameBoard, player, Collections.singletonList(player));
+        gameRunner = new PersonGameRunner(gameBoard, player, Collections.singletonList(player));
     }
 
     private GameBoard generateGameBoard() {
@@ -111,7 +107,7 @@ public class GameCanvas extends Canvas implements Runnable {
                 player.setDirection(Direction.NORTH);
                 gameBoard.insert(player, new Point2D(5, 5));
 
-                gameRunner = new AntGameRunner(gameBoard, player, Collections.singletonList(player));
+                gameRunner = new PersonGameRunner(gameBoard, player, Collections.singletonList(player));
             }
             tick();
             render();

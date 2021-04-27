@@ -2,7 +2,7 @@ package actor;
 
 import actor.actions.TurnLeft;
 import actor.actions.TurnRight;
-import runner.AntGameRunner;
+import runner.PersonGameRunner;
 import runner.Drawable;
 import state.Direction;
 import state.GameStateView;
@@ -35,7 +35,7 @@ public class Skeleton implements WalkingActor, Drawable {
 
     @Override
     public GameStateView generateView(ReadableBoard readonlyState) {
-        return PositionView.from(this, readonlyState, AntGameRunner.RELATIVE_POSITION);
+        return PositionView.from(this, readonlyState, PersonGameRunner.RELATIVE_POSITION);
     }
 
     @Override

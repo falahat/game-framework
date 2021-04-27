@@ -9,7 +9,7 @@ import state.board.WritableBoard;
 
 import java.util.Collection;
 
-import static runner.AntGameRunner.RELATIVE_POSITION;
+import static runner.PersonGameRunner.RELATIVE_POSITION;
 
 public class SmartPerson extends Person {
     private final MarkovDecisionProcess brain;

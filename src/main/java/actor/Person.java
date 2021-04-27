@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
-import static runner.AntGameRunner.RELATIVE_POSITION;
+import static runner.PersonGameRunner.RELATIVE_POSITION;
 
 public class Person implements WalkingActor, Drawable {
     private BufferedImage spriteSheet;

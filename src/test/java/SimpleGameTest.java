@@ -1,7 +1,7 @@
 import actor.Person;
 import actor.Board2DActor;
 import org.junit.jupiter.api.Test;
-import runner.AntGameRunner;
+import runner.PersonGameRunner;
 import state.Direction;
 import state.Point2D;
 import state.board.GameBoard;
@@ -20,7 +20,7 @@ public class SimpleGameTest {
         actors.add(person);
         gameBoard.insert(person, new Point2D(5, 5));
 
-        AntGameRunner runner = new AntGameRunner(gameBoard, person, actors);
+        PersonGameRunner runner = new PersonGameRunner(gameBoard, person, actors);
         runner.turn();
     }
 }
