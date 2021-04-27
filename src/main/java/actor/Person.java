@@ -32,10 +32,13 @@ public class Person implements WalkingActor, Drawable {
     }
 
     @Override
+    public void onNewRoundStart() {
+        this.isJumping = false;
+    }
+
+    @Override
     public Action<ReadableBoard, WritableBoard> decide(GameStateView currentState,
                                                        Collection<Action<ReadableBoard, WritableBoard>> allowedActions) {
-
-        this.isJumping = false; // TODO: create a "tick()" method that will be called for these
 
         // Ant can only see the block in front of it
         Action<ReadableBoard, WritableBoard> decided = null;
