@@ -1,5 +1,6 @@
 package state.board;
 
+import actor.Actor;
 import state.Point2D;
 
 public interface WritableBoard extends ReadableBoard {

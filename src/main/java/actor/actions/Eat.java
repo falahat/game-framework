@@ -1,18 +1,23 @@
 package actor.actions;
 
 import actor.Action;
+import actor.ActionPriority;
+import actor.Actor;
+import actor.WalkingActor;
 import state.Point2D;
-import state.board.*;
+import state.board.Bread;
+import state.board.ReadableBoard;
+import state.board.WritableBoard;
 
 public class Eat implements Action<ReadableBoard, WritableBoard> {
-    private final BoardObject eater;
+    private final WalkingActor eater;
 
-    public Eat(BoardWalker eater) {
+    public Eat(WalkingActor eater) {
         this.eater = eater;
     }
 
     @Override
-    public double updateState(WritableBoard currentGameState) {
+    public Reward updateState(WritableBoard currentGameState) {
         Point2D location = currentGameState.find(eater)
                 .orElseThrow(() -> new IllegalStateException("Actor did not exist"));
 
@@ -25,6 +30,16 @@ public class Eat implements Action<ReadableBoard, WritableBoard> {
         // Eat / remove the sugar
         currentGameState.remove(food);
 
-        return 200; // assuming we reached here, we were able to eat the food
+        return Reward.forActor(getActor(), 300);
+    }
+
+    @Override
+    public ActionPriority priority() {
+        return ActionPriority.MEDIUM;
+    }
+
+    @Override
+    public Actor<ReadableBoard, WritableBoard> getActor() {
+        return eater;
     }
 }

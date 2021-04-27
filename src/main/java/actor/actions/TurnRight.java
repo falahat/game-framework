@@ -1,24 +1,32 @@
 package actor.actions;
 
 import actor.Action;
-import state.Direction;
-import state.Point2D;
-import state.board.BoardWalker;
+import actor.ActionPriority;
+import actor.Actor;
+import actor.WalkingActor;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
-import java.util.Optional;
-
 public class TurnRight implements Action<ReadableBoard, WritableBoard> {
-    private final BoardWalker walker;
+    private final WalkingActor walker;
 
-    public TurnRight(BoardWalker walker) {
+    public TurnRight(WalkingActor walker) {
         this.walker = walker;
     }
 
     @Override
-    public double updateState(WritableBoard currentGameState) {
+    public Reward updateState(WritableBoard currentGameState) {
         walker.setDirection(walker.getDirection().clockwise());
-        return -10; // slight penalty for wasting time
+        return Reward.forActor(getActor(), -10);
+    }
+
+    @Override
+    public ActionPriority priority() {
+        return ActionPriority.MEDIUM;
+    }
+
+    @Override
+    public Actor<ReadableBoard, WritableBoard> getActor() {
+        return walker;
     }
 }

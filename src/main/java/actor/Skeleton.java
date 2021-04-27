@@ -8,7 +8,6 @@ import state.Direction;
 import state.GameStateView;
 import state.Point2D;
 import state.PositionView;
-import state.board.BoardWalker;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
@@ -19,7 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Skeleton implements Board2DActor, BoardWalker, Drawable {
+public class Skeleton implements WalkingActor, Drawable {
     private BufferedImage spriteSheet;
     private Direction direction;
     private final Set<Point2D> visited;

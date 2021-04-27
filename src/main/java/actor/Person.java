@@ -5,8 +5,10 @@ import actor.actions.MoveAhead;
 import actor.actions.TurnLeft;
 import actor.actions.TurnRight;
 import runner.Drawable;
-import state.*;
-import state.board.BoardWalker;
+import state.Direction;
+import state.GameStateView;
+import state.Point2D;
+import state.PositionView;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
@@ -16,19 +18,25 @@ import java.util.*;
 
 import static runner.AntGameRunner.RELATIVE_POSITION;
 
-public class Person implements Board2DActor, BoardWalker, Drawable {
+public class Person implements WalkingActor, Drawable {
     private BufferedImage spriteSheet;
-    private Direction direction;
     private final Set<Point2D> visited;
+
+    private Direction direction;
+    private boolean isJumping;
 
     public Person(Direction direction) {
         this.direction = direction;
         this.visited = new HashSet<>();
+        this.isJumping = false;
     }
 
     @Override
     public Action<ReadableBoard, WritableBoard> decide(GameStateView currentState,
                                                        Collection<Action<ReadableBoard, WritableBoard>> allowedActions) {
+
+        this.isJumping = false; // TODO: create a "tick()" method that will be called for these
+
         // Ant can only see the block in front of it
         Action<ReadableBoard, WritableBoard> decided = null;
 
@@ -50,6 +58,7 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
         } else {
             return decided;
         }
+
     }
 
     @Override
@@ -112,6 +121,14 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
         this.direction = direction;
     }
 
+    public boolean isJumping() {
+        return isJumping;
+    }
+
+    public void setJumping(boolean jumping) {
+        isJumping = jumping;
+    }
+
     @Override
     public BufferedImage getImage() throws IOException {
         if (spriteSheet == null) {
@@ -129,5 +146,4 @@ public class Person implements Board2DActor, BoardWalker, Drawable {
                 return spriteSheet.getSubimage(0, 32, 32, 32);
         }
     }
-
 }

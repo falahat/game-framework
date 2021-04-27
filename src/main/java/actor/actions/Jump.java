@@ -3,30 +3,31 @@ package actor.actions;
 import actor.Action;
 import actor.ActionPriority;
 import actor.Actor;
-import actor.WalkingActor;
+import actor.Person;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
-public class TurnLeft implements Action<ReadableBoard, WritableBoard> {
-    private final WalkingActor walker;
+public class Jump implements Action<ReadableBoard, WritableBoard> {
 
-    public TurnLeft(WalkingActor walker) {
-        this.walker = walker;
+    private final Person person;
+
+    public Jump(Person person) {
+        this.person = person;
     }
 
     @Override
     public Reward updateState(WritableBoard currentGameState) {
-        walker.setDirection(walker.getDirection().counterClockwise());
+        this.person.setJumping(true);
         return Reward.forActor(getActor(), -10);
     }
 
     @Override
     public ActionPriority priority() {
-        return ActionPriority.MEDIUM;
+        return ActionPriority.HIGH;
     }
 
     @Override
     public Actor<ReadableBoard, WritableBoard> getActor() {
-        return walker;
+        return person;
     }
 }

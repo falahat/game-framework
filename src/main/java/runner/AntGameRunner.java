@@ -1,8 +1,8 @@
 package runner;
 
 import actor.*;
+import actor.actions.Reward;
 import state.*;
-import state.board.Bread;
 import state.board.ReadableBoard;
 import state.board.GameBoard;
 import state.board.WritableBoard;
@@ -123,11 +123,15 @@ public class AntGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     }
 
     @Override
-    public WritableBoard calculateNextState(ReadableBoard previousState, List<Action<ReadableBoard, WritableBoard>> chosen, List<Double> rewardsPerAction) {
-        // later, we can make changes which don't depend on an action, such as increasing hunger by 1 each round.
-        WritableBoard nextState = previousState.mutableCopy();
-        chosen.forEach(action -> rewardsPerAction.add(action.updateState(nextState)));
-        return nextState;
+    public Reward calculateNextState(WritableBoard nextState,
+                                     List<Action<ReadableBoard, WritableBoard>> chosen) {
+
+        Reward[] rewards = new Reward[chosen.size()];
+        for (int i = 0; i < chosen.size(); i++) {
+            rewards[i] = chosen.get(i).updateState(nextState);
+        }
+
+        return Reward.merge(rewards);
     }
 
     @Override
