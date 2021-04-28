@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static state.PersonView.Sensed.BLOCKED;
 import static state.PersonView.Sensed.FOOD;
@@ -19,12 +20,12 @@ public class PositionView implements BoardView {
     final Sensed currentTile;
     final boolean isAheadTileVisited;
     final Direction directionOfClosestFood;
-    public PositionView(Direction personDirection,
+
+    private PositionView(Direction personDirection,
                         Map<Direction, Sensed> neighbors,
                         Sensed currentTile,
                         boolean isAheadTileVisited,
                         Direction directionOfClosestFood) {
-
         this.personDirection = personDirection;
         this.neighbors = neighbors;
         this.currentTile = currentTile;
@@ -37,24 +38,19 @@ public class PositionView implements BoardView {
         return ahead == Sensed.BLOCKED;
     }
 
+    public boolean isPlayerAhead() {
+        Sensed ahead = neighbors.getOrDefault(personDirection, BLOCKED);
+        return ahead == Sensed.BLOCKED;
+    }
+
     public boolean isAboveFood() {
         return currentTile == Sensed.FOOD;
     }
 
-    public static PositionView from(BoardWalker actor, ReadableBoard board, boolean relative) {
-        Optional<Point2D> currentLocation = board.find(actor);
-        if (currentLocation.isEmpty()) {
-            throw new IllegalStateException("This actor does not exist in the board");
-        }
+    public static PositionView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation,
+                                    Direction direction, boolean relative,
+                                    Predicate<BoardObject> isFood) {
 
-        return from(actor, board, currentLocation.get(), relative);
-    }
-
-    public static PositionView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation, boolean relative) {
-        return from(actor, board, currentLocation, actor.getDirection(), relative);
-    }
-
-    public static PositionView from(BoardWalker actor, ReadableBoard board, Point2D currentLocation, Direction direction, boolean relative) {
         Map<Direction, Sensed> neighbors = new HashMap<>();
         for (Direction dir : Direction.values()) {
             Point2D neighborPoint = currentLocation.transform(dir);
@@ -67,7 +63,7 @@ public class PositionView implements BoardView {
 
         Point2D closestFood = null;
         for (Point2D point : new BreadthFirstTraversal<>(board.getGraph())) {
-            if (board.members(point).stream().anyMatch(boardObj -> boardObj instanceof Bread)) {
+            if (board.members(point).stream().anyMatch(isFood)) {
                 closestFood = point;
                 break;
             }
@@ -75,8 +71,7 @@ public class PositionView implements BoardView {
 
         Direction directionClosestFood = closestFood == null ? Direction.NORTH : currentLocation.directionTo(closestFood);
 
-
-        while (direction != Direction.NORTH) {
+        while (relative && direction != Direction.NORTH) {
             direction = direction.clockwise();
             directionClosestFood = directionClosestFood.clockwise();
 
@@ -130,9 +125,4 @@ public class PositionView implements BoardView {
                 && Objects.equals(this.personDirection, other.personDirection)
                 && Objects.equals(this.directionOfClosestFood, other.directionOfClosestFood);
     }
-//
-//    @Override
-//    public String toString() {
-//        return String.format("(Current=%s Left=%s Front=%s Right=%s)", this.current, this.front, this.left, this.right);
-//    }
 }

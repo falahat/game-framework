@@ -5,10 +5,13 @@ import actor.actions.MoveAhead;
 import actor.actions.TurnLeft;
 import actor.actions.TurnRight;
 import runner.Drawable;
+import runner.PersonGameRunner;
 import state.Direction;
 import state.GameStateView;
 import state.Point2D;
 import state.PositionView;
+import state.board.BoardObject;
+import state.board.Bread;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
@@ -105,8 +108,13 @@ public class Person implements WalkingActor, Drawable {
     }
 
     @Override
-    public PositionView generateView(ReadableBoard fullState) {
-        return PositionView.from(this, fullState, RELATIVE_POSITION);
+    public GameStateView generateView(ReadableBoard readonlyState) {
+        Point2D currentLocation = readonlyState.find(this).orElseThrow();
+        return PositionView.from(this, readonlyState, currentLocation, getDirection(), PersonGameRunner.RELATIVE_POSITION, Person::isFood);
+    }
+
+    private static boolean isFood(BoardObject possible) {
+        return possible instanceof Bread;
     }
 
     @Override

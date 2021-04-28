@@ -3,6 +3,7 @@ package runner;
 import actor.*;
 import actor.actions.Reward;
 import state.*;
+import state.board.Bread;
 import state.board.ReadableBoard;
 import state.board.GameBoard;
 import state.board.WritableBoard;
@@ -41,7 +42,6 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
         renderCounter = (renderCounter+1) % 20;
 
         if (cachedRender == null || renderCounter == 0) {
-//            Image image = new BufferedImage()
             cachedRender = new BufferedImage(GameCanvas.WIDTH, GameCanvas.HEIGHT, BufferedImage.TYPE_INT_RGB);
         }
         Graphics innerGraphics = cachedRender.createGraphics();
@@ -49,9 +49,6 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
         board.locations().forEach(point -> {
             int rx = GameCanvas.TILE_SIZE * point.x;
             int ry = GameCanvas.TILE_SIZE * point.y;
-
-            int cx = rx + GameCanvas.TILE_SIZE/2;
-            int cy = ry + GameCanvas.TILE_SIZE/2;
 
             Point2D playerLoc = board.find(player).orElseThrow();
             Point2D distance = playerLoc.minus(point);
@@ -74,7 +71,8 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
                     Direction possibleDir = possibleDirections[i];
                     int centerAngle = angles[i];
 
-                    PositionView hypothetical = PositionView.from(player, board, point, possibleDir, RELATIVE_POSITION);
+                    PositionView hypothetical = PositionView.from(player, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Bread);
+
                     double scoreForLocation = ((SmartPerson) player).getMaximumEstimateScore(hypothetical);
                     bestScore = Math.max(bestScore, scoreForLocation);
 

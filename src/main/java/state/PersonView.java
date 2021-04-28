@@ -6,7 +6,6 @@ import state.board.BoardView;
 import state.board.Bread;
 import state.board.ReadableBoard;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -57,6 +56,8 @@ public class PersonView implements BoardView {
             return Sensed.BLOCKED;
         } else if (board.members(location).stream().anyMatch(obj -> obj instanceof Bread)) {
             return Sensed.FOOD;
+        } else if (board.members(location).stream().anyMatch(obj -> obj instanceof Person)) {
+            return Sensed.PERSON;
         } else {
             return Sensed.NONE;
         }
@@ -100,6 +101,7 @@ public class PersonView implements BoardView {
     public enum Sensed {
         NONE,
         BLOCKED,
-        FOOD
+        FOOD,
+        PERSON
     }
 }

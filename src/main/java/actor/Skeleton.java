@@ -1,41 +1,59 @@
 package actor;
 
-import actor.actions.TurnLeft;
-import actor.actions.TurnRight;
+import actor.actions.*;
 import runner.PersonGameRunner;
 import runner.Drawable;
 import state.Direction;
 import state.GameStateView;
 import state.Point2D;
 import state.PositionView;
+import state.board.BoardObject;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class Skeleton implements WalkingActor, Drawable {
     private BufferedImage spriteSheet;
     private Direction direction;
     private final Set<Point2D> visited;
+    private final Person prey;
 
-    public Skeleton(Direction direction) {
+    public Skeleton(Direction direction, Person prey) {
         this.direction = direction;
         this.visited = new HashSet<>();
+        this.prey = prey;
     }
 
     @Override
     public Collection<Action<ReadableBoard, WritableBoard>> getAllowedActions(GameStateView currentView) {
-        return Collections.singleton(new TurnLeft(this));
+        PositionView visible = (PositionView) currentView;
+
+        List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
+        actions.add(new TurnLeft(this));
+        actions.add(new TurnRight(this));
+        if (visible.isPlayerAhead()) {
+            actions.add(new Lunge(this, prey));
+        } else if (!visible.isBlockedAhead()) {
+            actions.add(new MoveAhead(this));
+        }
+
+        // Can attempt to go forward, but might be blocked
+        // If we are 100% sure the tile in front is blocked, we will not go forward
+        return actions;
     }
 
     @Override
     public GameStateView generateView(ReadableBoard readonlyState) {
-        return PositionView.from(this, readonlyState, PersonGameRunner.RELATIVE_POSITION);
+        Point2D currentLocation = readonlyState.find(this).orElseThrow();
+        return PositionView.from(this, readonlyState, currentLocation, getDirection(), PersonGameRunner.RELATIVE_POSITION, Skeleton::isFood);
+    }
+
+    private static boolean isFood(BoardObject possible) {
+        return possible instanceof Person;
     }
 
     @Override
@@ -47,7 +65,6 @@ public class Skeleton implements WalkingActor, Drawable {
     public void learn(Action<ReadableBoard, WritableBoard> decided, GameStateView firstView, GameStateView nextView, double immediateReward) {
 
     }
-
 
     @Override
     public BufferedImage getImage() throws IOException {

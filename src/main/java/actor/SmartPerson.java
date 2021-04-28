@@ -35,8 +35,4 @@ public class SmartPerson extends Person {
         return brain.getMaximumEstimateScore(state);
     }
 
-    @Override
-    public PositionView generateView(ReadableBoard fullState) {
-        return PositionView.from(this, fullState, RELATIVE_POSITION);
-    }
 }

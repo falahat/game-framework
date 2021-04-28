@@ -35,6 +35,7 @@ public class GameCanvas extends Canvas implements Runnable {
     PersonGameRunner gameRunner;
     GameBoard gameBoard;
     SmartPerson player;
+    Skeleton enemy;
 
     public void init(){
         requestFocus();
@@ -42,7 +43,7 @@ public class GameCanvas extends Canvas implements Runnable {
 
         player = new SmartPerson(Direction.NORTH);
 
-        Skeleton enemy = new Skeleton(Direction.NORTH);
+        Skeleton enemy = new Skeleton(Direction.NORTH, player);
 
         gameBoard.insert(player, new Point2D(5, 5));
         gameBoard.insert(enemy, new Point2D(4, 4));
