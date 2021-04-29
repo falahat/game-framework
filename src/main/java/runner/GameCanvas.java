@@ -14,7 +14,7 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Random;
 
 // credit to https://code-knowledge.com/java-create-game-introduction/
@@ -42,13 +42,12 @@ public class GameCanvas extends Canvas implements Runnable {
         gameBoard = generateGameBoard();
 
         player = new SmartPerson(Direction.NORTH);
-
-        Skeleton enemy = new Skeleton(Direction.NORTH, player);
+        enemy = new Skeleton(Direction.NORTH, player);
 
         gameBoard.insert(player, new Point2D(5, 5));
         gameBoard.insert(enemy, new Point2D(4, 4));
 
-        gameRunner = new PersonGameRunner(gameBoard, player, Collections.singletonList(player));
+        gameRunner = new PersonGameRunner(gameBoard, player, Arrays.asList(player, enemy));
     }
 
     private GameBoard generateGameBoard() {
@@ -108,7 +107,11 @@ public class GameCanvas extends Canvas implements Runnable {
                 player.setDirection(Direction.NORTH);
                 gameBoard.insert(player, new Point2D(5, 5));
 
-                gameRunner = new PersonGameRunner(gameBoard, player, Collections.singletonList(player));
+                enemy.clearAllVisited();
+                enemy.setDirection(Direction.NORTH);
+                gameBoard.insert(enemy, new Point2D(4, 4));
+
+                gameRunner = new PersonGameRunner(gameBoard, player, Arrays.asList(player, enemy));
             }
             tick();
             render();

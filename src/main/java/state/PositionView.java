@@ -37,9 +37,9 @@ public class PositionView implements BoardView {
         return ahead != Sensed.BLOCKED;
     }
 
-    public boolean isPlayerAhead() {
+    public boolean isFoodAhead() {
         Sensed ahead = neighbors.getOrDefault(personDirection, BLOCKED);
-        return ahead == Sensed.BLOCKED;
+        return ahead == FOOD;
     }
 
     public boolean isAboveFood() {

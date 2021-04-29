@@ -1,9 +1,6 @@
 package actor;
 
-import actor.actions.Eat;
-import actor.actions.MoveAhead;
-import actor.actions.TurnLeft;
-import actor.actions.TurnRight;
+import actor.actions.*;
 import runner.Drawable;
 import runner.PersonGameRunner;
 import state.Direction;
@@ -72,6 +69,8 @@ public class Person implements WalkingActor, Drawable {
         List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
         actions.add(new TurnLeft(this));
         actions.add(new TurnRight(this));
+        actions.add(new Jump(this));
+
         if (visible.isAboveFood()) {
             actions.add(new Eat(this));
         } else if (visible.isFreeAhead()) {

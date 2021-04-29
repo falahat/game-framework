@@ -1,6 +1,7 @@
 package actor;
 
 import actor.actions.*;
+import actor.algorithms.QALearner;
 import runner.PersonGameRunner;
 import runner.Drawable;
 import state.Direction;
@@ -21,10 +22,13 @@ public class Skeleton implements WalkingActor, Drawable {
     private final Set<Point2D> visited;
     private final Person prey;
 
+    private final QALearner brain;
+
     public Skeleton(Direction direction, Person prey) {
         this.direction = direction;
         this.visited = new HashSet<>();
         this.prey = prey;
+        this.brain = new QALearner();
     }
 
     @Override
@@ -34,14 +38,15 @@ public class Skeleton implements WalkingActor, Drawable {
         List<Action<ReadableBoard, WritableBoard>> actions = new ArrayList<>();
         actions.add(new TurnLeft(this));
         actions.add(new TurnRight(this));
-        if (visible.isPlayerAhead()) {
+
+        if (visible.isFoodAhead()) {
             actions.add(new Lunge(this, prey));
-        } else if (visible.isFreeAhead()) {
+        }
+
+        if (visible.isFreeAhead()) {
             actions.add(new MoveAhead(this));
         }
 
-        // Can attempt to go forward, but might be blocked
-        // If we are 100% sure the tile in front is blocked, we will not go forward
         return actions;
     }
 
@@ -57,12 +62,12 @@ public class Skeleton implements WalkingActor, Drawable {
 
     @Override
     public Action<ReadableBoard, WritableBoard> decide(GameStateView currentView, Collection<Action<ReadableBoard, WritableBoard>> allowedActions) {
-        return allowedActions.stream().findAny().orElse(new TurnRight(this));
+        return brain.decide(currentView, allowedActions);
     }
 
     @Override
     public void learn(Action<ReadableBoard, WritableBoard> decided, GameStateView firstView, GameStateView nextView, double immediateReward) {
-
+        brain.learn(decided, firstView, nextView, immediateReward);
     }
 
     @Override

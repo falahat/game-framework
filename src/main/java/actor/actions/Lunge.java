@@ -23,22 +23,28 @@ public class Lunge implements Action<ReadableBoard, WritableBoard> {
         Reward result = new Reward();
 
         // TODO: in the future, check if the prey is close enough
-        boolean eaten = !this.prey.isJumping()
+        boolean eaten = !this.prey.isJumping() // 100% chance of death if not jumping
                 || new Random().nextDouble() < PROBABILITY_DEATH_IF_JUMPING;
 
         if (eaten) {
             result.addReward(predator, 500);
             result.addReward(prey, -500);
-//            currentGameState.remove(prey); // TODO: remove actors
+            // remove actors? For now, just punish them severely
         } else {
             result.addReward(predator, -50);
             result.addReward(prey, 0);
         }
-        Point2D newLocation = currentGameState.find(predator).orElseThrow()
+
+        Point2D currentLoc = currentGameState.find(predator).orElseThrow();
+        Point2D twoTilesAhead = currentLoc
                 .transform(predator.getDirection())
                 .transform(predator.getDirection());
 
-        currentGameState.move(predator, newLocation);
+        if (currentGameState.locations().contains(twoTilesAhead)) {
+            currentGameState.move(predator, twoTilesAhead);
+        } else {
+            currentGameState.move(predator, currentLoc.transform(predator.getDirection()));
+        }
 
         return result;
     }
