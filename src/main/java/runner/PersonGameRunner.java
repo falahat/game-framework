@@ -2,16 +2,19 @@ package runner;
 
 import actor.*;
 import actor.actions.Reward;
-import state.*;
+import state.Direction;
+import state.GameStateView;
+import state.Point2D;
+import state.PositionView;
 import state.board.Bread;
-import state.board.ReadableBoard;
 import state.board.GameBoard;
+import state.board.ReadableBoard;
 import state.board.WritableBoard;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     private static final double MAX_SCORE = 300;
@@ -22,6 +25,7 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
     private WritableBoard board;
     private final List<Board2DActor> actors;
     private final Person player; // this is one of the actors, but will be tracked more closely
+    private final Skeleton enemy;
 
     private final Map<GameStateView, Color> uniqueColorLabels;
 
@@ -29,11 +33,12 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
 
     private BufferedImage cachedRender = null;
 
-    public PersonGameRunner(GameBoard board, Person player, List<Board2DActor> actors) {
+    public PersonGameRunner(GameBoard board, Person player, Skeleton enemy, List<Board2DActor> actors) {
         // Assume actors have already been inserted on the board.
         this.board = board;
         this.actors = actors;
         this.player = player;
+        this.enemy = enemy;
         uniqueColorLabels = new HashMap<>();
     }
 
@@ -73,8 +78,10 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
                     int centerAngle = angles[i];
 
                     PositionView hypothetical = PositionView.from(player, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Bread);
+//                    PositionView hypothetical = PositionView.from(enemy, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Person);
 
-                    double scoreForLocation = ((SmartPerson) player).getMaximumEstimateScore(hypothetical);
+                    double scoreForLocation = enemy.getBrain().getMaximumEstimateScore(hypothetical);
+
                     bestScore = Math.max(bestScore, scoreForLocation);
 
                     // Paint the expected score

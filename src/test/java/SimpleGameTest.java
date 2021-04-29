@@ -1,5 +1,6 @@
 import actor.Person;
 import actor.Board2DActor;
+import actor.Skeleton;
 import org.junit.jupiter.api.Test;
 import runner.PersonGameRunner;
 import state.Direction;
@@ -17,10 +18,12 @@ public class SimpleGameTest {
 
         List<Board2DActor> actors = new ArrayList<>();
         Person person = new Person(Direction.NORTH);
+        Skeleton enemy = new Skeleton(Direction.NORTH, person);
+
         actors.add(person);
         gameBoard.insert(person, new Point2D(5, 5));
 
-        PersonGameRunner runner = new PersonGameRunner(gameBoard, person, actors);
+        PersonGameRunner runner = new PersonGameRunner(gameBoard, person, enemy, actors);
         runner.turn();
     }
 }

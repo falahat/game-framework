@@ -32,5 +32,4 @@ public class SmartPerson extends Person {
     public double getMaximumEstimateScore(PositionView state) {
         return brain.getMaximumEstimateScore(state);
     }
-
 }

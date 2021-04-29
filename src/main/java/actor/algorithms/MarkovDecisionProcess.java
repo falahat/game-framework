@@ -22,6 +22,7 @@ public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableB
     public static final boolean ALWAYS_PICK_BEST_ACTION = false;
     public static final int INITIAL_STATE_VALUE = 100;
     public static final int MINIMUM_DATAPOINTS = 1;
+    public static final int RECALCULATION_FREQUENCY = 5;
 
     private int counter = 0;
 
@@ -81,7 +82,7 @@ public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableB
         seenStates.add(firstView);
 
         counter++;
-        if ((counter % 100) == 0) {
+        if ((counter % RECALCULATION_FREQUENCY) == 0) {
             counter = 1;
             for (GameStateView view : seenStates) {
                 this.estimateStateValues.put(view, calculateMaximumScore((view)));

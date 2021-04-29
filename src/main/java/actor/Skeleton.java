@@ -1,9 +1,12 @@
 package actor;
 
-import actor.actions.*;
-import actor.algorithms.QALearner;
-import runner.PersonGameRunner;
+import actor.actions.Lunge;
+import actor.actions.MoveAhead;
+import actor.actions.TurnLeft;
+import actor.actions.TurnRight;
+import actor.algorithms.MarkovDecisionProcess;
 import runner.Drawable;
+import runner.PersonGameRunner;
 import state.Direction;
 import state.GameStateView;
 import state.Point2D;
@@ -22,13 +25,13 @@ public class Skeleton implements WalkingActor, Drawable {
     private final Set<Point2D> visited;
     private final Person prey;
 
-    private final QALearner brain;
+    private final MarkovDecisionProcess brain;
 
     public Skeleton(Direction direction, Person prey) {
         this.direction = direction;
         this.visited = new HashSet<>();
         this.prey = prey;
-        this.brain = new QALearner();
+        this.brain = new MarkovDecisionProcess();
     }
 
     @Override
@@ -62,6 +65,22 @@ public class Skeleton implements WalkingActor, Drawable {
 
     @Override
     public Action<ReadableBoard, WritableBoard> decide(GameStateView currentView, Collection<Action<ReadableBoard, WritableBoard>> allowedActions) {
+        PositionView view = (PositionView) currentView;
+
+        for (Action<ReadableBoard, WritableBoard> possible : allowedActions) {
+            if (possible instanceof Lunge) {
+                return possible; // Always eat prey if possible
+            } else if (possible instanceof MoveAhead) {
+                if (getDirection() == view.getDirectionOfClosestFood()) {
+                    return possible;
+                }
+                // move ahead if facing the right direction
+            }
+        }
+
+//        return new TurnRight(this);
+
+        // Otherwise, let the brain decide which direction to turn?
         return brain.decide(currentView, allowedActions);
     }
 
@@ -118,5 +137,9 @@ public class Skeleton implements WalkingActor, Drawable {
     @Override
     public void clearAllVisited() {
         visited.clear();
+    }
+
+    public MarkovDecisionProcess getBrain() {
+        return brain;
     }
 }

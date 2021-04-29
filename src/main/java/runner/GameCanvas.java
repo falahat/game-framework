@@ -47,7 +47,7 @@ public class GameCanvas extends Canvas implements Runnable {
         gameBoard.insert(player, new Point2D(5, 5));
         gameBoard.insert(enemy, new Point2D(4, 4));
 
-        gameRunner = new PersonGameRunner(gameBoard, player, Arrays.asList(player, enemy));
+        gameRunner = new PersonGameRunner(gameBoard, player, enemy, Arrays.asList(player, enemy));
     }
 
     private GameBoard generateGameBoard() {
@@ -58,7 +58,7 @@ public class GameCanvas extends Canvas implements Runnable {
             for (int y = 0; y < GRAPH_WIDTH; y++) {
                 if (random.nextBoolean()) {
                     gameBoard.insert(new Bread(), new Point2D(x, y));
-                } else if (random.nextBoolean()) {
+                } else if (random.nextBoolean() && random.nextBoolean()) {
                     gameBoard.insert(new Rock(), new Point2D(x, y));
                 }
             }
@@ -98,7 +98,7 @@ public class GameCanvas extends Canvas implements Runnable {
 
         int i = 1;
 
-        while(running){
+        while (running) {
             i = ((i + 1) % 500);
             if (i == 0) {
                 gameBoard = generateGameBoard();
@@ -111,8 +111,9 @@ public class GameCanvas extends Canvas implements Runnable {
                 enemy.setDirection(Direction.NORTH);
                 gameBoard.insert(enemy, new Point2D(4, 4));
 
-                gameRunner = new PersonGameRunner(gameBoard, player, Arrays.asList(player, enemy));
+                gameRunner = new PersonGameRunner(gameBoard, player, enemy, Arrays.asList(player, enemy));
             }
+
             tick();
             render();
         }

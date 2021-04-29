@@ -1,7 +1,7 @@
 package state;
 
+import actor.Person;
 import algorithms.traverse.BreadthFirstTraversal;
-import state.PersonView.Sensed;
 import state.board.*;
 
 import java.util.HashMap;
@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import static state.PersonView.Sensed.BLOCKED;
-import static state.PersonView.Sensed.FOOD;
-import static state.PersonView.sense;
+import static state.Sensed.BLOCKED;
+import static state.Sensed.FOOD;
 
 public class PositionView implements BoardView {
     final Direction personDirection;
@@ -42,6 +41,10 @@ public class PositionView implements BoardView {
         return ahead == FOOD;
     }
 
+    public Direction getDirectionOfClosestFood() {
+        return directionOfClosestFood;
+    }
+
     public boolean isAboveFood() {
         return currentTile == Sensed.FOOD;
     }
@@ -53,10 +56,10 @@ public class PositionView implements BoardView {
         Map<Direction, Sensed> neighbors = new HashMap<>();
         for (Direction dir : Direction.values()) {
             Point2D neighborPoint = currentLocation.transform(dir);
-            neighbors.put(dir, sense(board, neighborPoint));
+            neighbors.put(dir, sense(board, neighborPoint, isFood));
         }
 
-        Sensed currentTile = sense(board, currentLocation);
+        Sensed currentTile = sense(board, currentLocation, isFood);
 
         boolean isAheadTileVisited = actor.hasVisited(currentLocation.transform(direction));
 
@@ -123,5 +126,18 @@ public class PositionView implements BoardView {
                 && Objects.equals(this.isAheadTileVisited, other.isAheadTileVisited)
                 && Objects.equals(this.personDirection, other.personDirection)
                 && Objects.equals(this.directionOfClosestFood, other.directionOfClosestFood);
+    }
+
+
+    public static Sensed sense(ReadableBoard board, Point2D location, Predicate<BoardObject> isFood) {
+        if (!board.locations().contains(location) || board.members(location).stream().anyMatch(BoardObject::isBlocking)) {
+            return Sensed.BLOCKED;
+        } else if (board.members(location).stream().anyMatch(isFood)) {
+            return Sensed.FOOD;
+        } else if (board.members(location).stream().anyMatch(obj -> obj instanceof Person)) {
+            return Sensed.PERSON;
+        } else {
+            return Sensed.NONE;
+        }
     }
 }
