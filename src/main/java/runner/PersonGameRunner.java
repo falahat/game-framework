@@ -17,6 +17,7 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
     private static final double MAX_SCORE = 300;
     public static final boolean RELATIVE_POSITION = true;
     public static final Color BACKGROUND = Color.lightGray;
+    public static final int RENDER_FREQUENCY = 1;
 
     private WritableBoard board;
     private final List<Board2DActor> actors;
@@ -39,7 +40,7 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
     @Override
     public void render(Graphics originalGraphic) {
 
-        renderCounter = (renderCounter+1) % 20;
+        renderCounter = (renderCounter+1) % RENDER_FREQUENCY;
 
         if (cachedRender == null || renderCounter == 0) {
             cachedRender = new BufferedImage(GameCanvas.WIDTH, GameCanvas.HEIGHT, BufferedImage.TYPE_INT_RGB);
