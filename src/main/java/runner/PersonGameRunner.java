@@ -16,7 +16,7 @@ import java.util.List;
 public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     private static final double MAX_SCORE = 300;
     public static final boolean RELATIVE_POSITION = true;
-    public static Color BACKGROUND = Color.lightGray;
+    public static final Color BACKGROUND = Color.lightGray;
 
     private WritableBoard board;
     private final List<Board2DActor> actors;

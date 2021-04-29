@@ -1,6 +1,5 @@
 package state.board;
 
-import actor.Actor;
 import state.Point2D;
 import state.graph.BoardTile;
 

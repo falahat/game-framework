@@ -7,7 +7,6 @@ import state.board.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import static state.PersonView.Sensed.BLOCKED;
@@ -33,9 +32,9 @@ public class PositionView implements BoardView {
         this.directionOfClosestFood = directionOfClosestFood;
     }
 
-    public boolean isBlockedAhead() {
+    public boolean isFreeAhead() {
         Sensed ahead = neighbors.getOrDefault(personDirection, BLOCKED);
-        return ahead == Sensed.BLOCKED;
+        return ahead != Sensed.BLOCKED;
     }
 
     public boolean isPlayerAhead() {

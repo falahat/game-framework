@@ -19,8 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
-import static runner.PersonGameRunner.RELATIVE_POSITION;
-
 public class Person implements WalkingActor, Drawable {
     private BufferedImage spriteSheet;
     private final Set<Point2D> visited;
@@ -76,7 +74,7 @@ public class Person implements WalkingActor, Drawable {
         actions.add(new TurnRight(this));
         if (visible.isAboveFood()) {
             actions.add(new Eat(this));
-        } else if (!visible.isBlockedAhead()) {
+        } else if (visible.isFreeAhead()) {
             actions.add(new MoveAhead(this));
         }
 

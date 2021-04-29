@@ -14,7 +14,6 @@ import state.board.WritableBoard;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Predicate;
 
 public class Skeleton implements WalkingActor, Drawable {
     private BufferedImage spriteSheet;
@@ -37,7 +36,7 @@ public class Skeleton implements WalkingActor, Drawable {
         actions.add(new TurnRight(this));
         if (visible.isPlayerAhead()) {
             actions.add(new Lunge(this, prey));
-        } else if (!visible.isBlockedAhead()) {
+        } else if (visible.isFreeAhead()) {
             actions.add(new MoveAhead(this));
         }
 

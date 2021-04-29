@@ -29,12 +29,11 @@ public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableB
     // for each game state, it stores a map of possible actions.
     // for each of those actions, we track the "next state" that this action transformed the original gamestate to
     // we keep a count of the "next states", which can be used to approximate probability outcomes
-    Map<GameStateView, Map<String, Map<GameStateView, Integer>>> outcomes; // TODO: might need to use action.uniqueActionType instead
+    private final Map<GameStateView, Map<String, Map<GameStateView, Integer>>> outcomes;
 
-    // TODO: this assumes the reward is the same for all state,nextState,action tuples
-    Map<GameStateView, Map<String, Map<GameStateView, Double>>> rewards;
-    Map<GameStateView, Double> estimateStateValues; // stores the estimate best values
-    Set<GameStateView> seenStates = new HashSet<>();
+    private final Map<GameStateView, Map<String, Map<GameStateView, Double>>> rewards;
+    private final Map<GameStateView, Double> estimateStateValues; // stores the estimate best values
+    private final Set<GameStateView> seenStates = new HashSet<>();
 
     public MarkovDecisionProcess() {
         this.outcomes = new HashMap<>();
@@ -75,14 +74,10 @@ public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableB
         rewards.get(firstView).putIfAbsent(decided.uniqueActionType(), new HashMap<>()); // outcomes[state][action] = a count of possible outcomes
         double currReward = rewards.get(firstView).get(decided.uniqueActionType()).getOrDefault(nextView, 0.0);
         if (currReward != immediateReward) {
-//            throw new IllegalStateException("Unexpected, reward value changed for state transition");
             currReward = (1-LEARNING_RATE)*currReward + LEARNING_RATE*immediateReward;
         }
         rewards.get(firstView).get(decided.uniqueActionType()).put(nextView, currReward);
 
-        // update value of og state
-//        this.estimateStateValues.put(firstView, calculateMaximumScore(firstView));
-//        this.estimateStateValues.put(nextView, calculateMaximumScore(nextView));
         seenStates.add(firstView);
 
         counter++;
