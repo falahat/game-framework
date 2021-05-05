@@ -80,7 +80,7 @@ public class Point2D {
         } else if (diff.y > 0) {
             return Direction.SOUTH;
         } else {
-            throw new IllegalArgumentException("Other point had no difference with this point");
+            return Direction.NORTH; // TODO: north?
         }
     }
 

@@ -6,6 +6,7 @@ import state.Direction;
 import state.GameStateView;
 import state.Point2D;
 import state.PositionView;
+import state.board.Bread;
 import state.board.GameBoard;
 import state.board.ReadableBoard;
 import state.board.WritableBoard;
@@ -76,8 +77,9 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
                     Direction possibleDir = possibleDirections[i];
                     int centerAngle = angles[i];
 
-//                    PositionView hypothetical = PositionView.from(player, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Bread);
-                    PositionView hypothetical = PositionView.from(enemy, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Person);
+                    PositionView playerHypothetical = PositionView.from(player, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Bread);
+                    PositionView skeletonHypothetical = PositionView.from(enemy, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Person);
+                    PositionView hypothetical = skeletonHypothetical;
 
                     double scoreForLocation = enemy.getBrain().getMaximumEstimateScore(hypothetical);
 

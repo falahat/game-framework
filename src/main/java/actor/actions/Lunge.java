@@ -8,7 +8,7 @@ import state.board.WritableBoard;
 import java.util.Random;
 
 public class Lunge implements Action<ReadableBoard, WritableBoard> {
-    public static final double PROBABILITY_DEATH_IF_JUMPING = 0;
+    public static final double PROBABILITY_DEATH_IF_JUMPING = 0.50;
 
     private final Skeleton predator;
     private final Person prey;
@@ -27,8 +27,8 @@ public class Lunge implements Action<ReadableBoard, WritableBoard> {
                 || new Random().nextDouble() < PROBABILITY_DEATH_IF_JUMPING;
 
         if (eaten) {
-            result.addReward(predator, 500);
-            result.addReward(prey, -500);
+            result.addReward(predator, 1000);
+            result.addReward(prey, -1000);
             // remove actors? For now, just punish them severely
         } else {
             result.addReward(predator, -50);

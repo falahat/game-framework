@@ -3,5 +3,6 @@ package state;
 public enum Sensed {
     NONE,
     BLOCKED,
-    FOOD
+    FOOD,
+    PREDATOR
 }

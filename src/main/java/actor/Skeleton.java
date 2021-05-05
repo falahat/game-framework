@@ -96,14 +96,15 @@ public class Skeleton implements WalkingActor, Drawable {
         int spriteSize = 64;
 
         switch (getDirection()) {
-            case SOUTH:
-                return spriteSheet.getSubimage(0, 0, spriteSize, spriteSize);
             case NORTH:
-                return spriteSheet.getSubimage(0, spriteSize, spriteSize, spriteSize);
+                return spriteSheet.getSubimage(0, 0, spriteSize, spriteSize);
+            case SOUTH:
+                return spriteSheet.getSubimage(0, 2*spriteSize, spriteSize, spriteSize);
             case WEST:
+                return spriteSheet.getSubimage(0, spriteSize, spriteSize, spriteSize);
             case EAST: // TODO: flip
             default:
-                return spriteSheet.getSubimage(0, 2*spriteSize, spriteSize, spriteSize);
+                return spriteSheet.getSubimage(0, 3*spriteSize, spriteSize, spriteSize);
         }
     }
 

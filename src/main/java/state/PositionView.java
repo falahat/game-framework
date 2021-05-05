@@ -1,5 +1,6 @@
 package state;
 
+import actor.Skeleton;
 import algorithms.traverse.BreadthFirstTraversal;
 import state.board.BoardObject;
 import state.board.BoardView;
@@ -66,7 +67,7 @@ public class PositionView implements BoardView {
         boolean isAheadTileVisited = actor.hasVisited(currentLocation.transform(direction));
 
         Point2D closestFood = null;
-        for (Point2D point : new BreadthFirstTraversal<>(board.getGraph())) {
+        for (Point2D point : new BreadthFirstTraversal<>(board.getGraph(), currentLocation)) {
             if (board.members(point).stream().anyMatch(isFood)) {
                 closestFood = point;
                 break;
@@ -135,6 +136,8 @@ public class PositionView implements BoardView {
             return Sensed.BLOCKED;
         } else if (board.members(location).stream().anyMatch(isFood)) {
             return Sensed.FOOD;
+        } else if (board.members(location).stream().anyMatch(o -> o instanceof Skeleton)) {
+            return Sensed.PREDATOR;
         } else {
             return Sensed.NONE;
         }
