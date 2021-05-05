@@ -39,23 +39,23 @@ public class GameCanvas extends Canvas implements Runnable {
 
     public void init(){
         requestFocus();
-        gameBoard = generateGameBoard();
+        gameBoard = generateGameBoard(4);
 
         player = new SmartPerson(Direction.NORTH);
         enemy = new Skeleton(Direction.NORTH, player);
 
-        gameBoard.insert(player, new Point2D(5, 5));
-        gameBoard.insert(enemy, new Point2D(4, 4));
+        gameBoard.insert(player, new Point2D(3, 3));
+        gameBoard.insert(enemy, new Point2D(2, 2));
 
         gameRunner = new PersonGameRunner(gameBoard, player, enemy, Arrays.asList(player, enemy));
     }
 
-    private GameBoard generateGameBoard() {
-        GameBoard gameBoard = new GameBoard(GRAPH_WIDTH, GRAPH_WIDTH);
+    private GameBoard generateGameBoard(int size) {
+        GameBoard gameBoard = new GameBoard(size, size);
 
         Random random = new Random();
-        for (int x = 0; x < GRAPH_WIDTH; x++) {
-            for (int y = 0; y < GRAPH_WIDTH; y++) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
                 if (random.nextBoolean()) {
                     gameBoard.insert(new Bread(), new Point2D(x, y));
                 } else if (random.nextBoolean() && random.nextBoolean()) {
@@ -96,20 +96,22 @@ public class GameCanvas extends Canvas implements Runnable {
     public void run(){
         init();
 
-        int i = 1;
-
+        int round = 0;
+        int turn = 1;
         while (running) {
-            i = ((i + 1) % 500);
-            if (i == 0) {
-                gameBoard = generateGameBoard();
+            turn = ((turn + 1) % 500);
+            if (turn == 0) {
+                round++;
+                int size = round <= 3 ? 5 : GRAPH_WIDTH;
+                gameBoard = generateGameBoard(size);
 
                 player.clearAllVisited();
                 player.setDirection(Direction.NORTH);
-                gameBoard.insert(player, new Point2D(5, 5));
+                gameBoard.insert(player, new Point2D(3, 3));
 
                 enemy.clearAllVisited();
                 enemy.setDirection(Direction.NORTH);
-                gameBoard.insert(enemy, new Point2D(4, 4));
+                gameBoard.insert(enemy, new Point2D(2, 2));
 
                 gameRunner = new PersonGameRunner(gameBoard, player, enemy, Arrays.asList(player, enemy));
             }

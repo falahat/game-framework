@@ -78,8 +78,6 @@ public class Skeleton implements WalkingActor, Drawable {
             }
         }
 
-//        return new TurnRight(this);
-
         // Otherwise, let the brain decide which direction to turn?
         return brain.decide(currentView, allowedActions);
     }

@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
  */
 public class MarkovDecisionProcess implements Trainable<ReadableBoard, WritableBoard> {
     public static final double LEARNING_RATE = 0.20;
-    public static final double DISCOUNT_RATE = 0.95;
-    public static final boolean ALWAYS_PICK_BEST_ACTION = false;
-    public static final int INITIAL_STATE_VALUE = 100;
+    public static final double DISCOUNT_RATE = 0.65;
+    public static final boolean ALWAYS_PICK_BEST_ACTION = true;
+    public static final int INITIAL_STATE_VALUE = 300;
     public static final int MINIMUM_DATAPOINTS = 1;
     public static final int RECALCULATION_FREQUENCY = 5;
 

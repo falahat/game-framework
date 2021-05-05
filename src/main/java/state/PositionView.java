@@ -1,8 +1,10 @@
 package state;
 
-import actor.Person;
 import algorithms.traverse.BreadthFirstTraversal;
-import state.board.*;
+import state.board.BoardObject;
+import state.board.BoardView;
+import state.board.BoardWalker;
+import state.board.ReadableBoard;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -127,15 +129,12 @@ public class PositionView implements BoardView {
                 && Objects.equals(this.personDirection, other.personDirection)
                 && Objects.equals(this.directionOfClosestFood, other.directionOfClosestFood);
     }
-
-
+    
     public static Sensed sense(ReadableBoard board, Point2D location, Predicate<BoardObject> isFood) {
         if (!board.locations().contains(location) || board.members(location).stream().anyMatch(BoardObject::isBlocking)) {
             return Sensed.BLOCKED;
         } else if (board.members(location).stream().anyMatch(isFood)) {
             return Sensed.FOOD;
-        } else if (board.members(location).stream().anyMatch(obj -> obj instanceof Person)) {
-            return Sensed.PERSON;
         } else {
             return Sensed.NONE;
         }
