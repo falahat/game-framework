@@ -18,13 +18,13 @@ import java.util.*;
 
 public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard> {
     private static final double MAX_SCORE = 300;
-    public static final boolean RELATIVE_POSITION = false;
+    public static final boolean RELATIVE_POSITION = true;
     public static final Color BACKGROUND = Color.lightGray;
-    public static final int RENDER_FREQUENCY = 1;
+    public static final int RENDER_FREQUENCY = 5;
 
     private WritableBoard board;
     private final List<Board2DActor> actors;
-    private final Person player; // this is one of the actors, but will be tracked more closely
+    private final SmartPerson player; // this is one of the actors, but will be tracked more closely
     private final Skeleton enemy;
 
     private final Map<GameStateView, Color> uniqueColorLabels;
@@ -33,7 +33,7 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
 
     private BufferedImage cachedRender = null;
 
-    public PersonGameRunner(GameBoard board, Person player, Skeleton enemy, List<Board2DActor> actors) {
+    public PersonGameRunner(GameBoard board, SmartPerson player, Skeleton enemy, List<Board2DActor> actors) {
         // Assume actors have already been inserted on the board.
         this.board = board;
         this.actors = actors;
@@ -66,50 +66,49 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
             innerGraphics.setColor(BACKGROUND);
             innerGraphics.fillRect(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
 
-            boolean isScoring = player instanceof SmartPerson;
-            if (isScoring) {
-                // (255, 0, 0) => (0, 255, 0)
-                Direction[] possibleDirections = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
-                int[] angles = new int[]{90, 0, 270, 180};
+            boolean isScoring = true;
+            // (255, 0, 0) => (0, 255, 0)
+            Direction[] possibleDirections = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
+            int[] angles = new int[]{90, 0, 270, 180};
 
-                double bestScore = Integer.MIN_VALUE;
-                for (int i=0; i < possibleDirections.length; i++) {
-                    Direction possibleDir = possibleDirections[i];
-                    int centerAngle = angles[i];
+            double bestScore = Integer.MIN_VALUE;
+            for (int i=0; i < possibleDirections.length; i++) {
+                Direction possibleDir = possibleDirections[i];
+                int centerAngle = angles[i];
 
-                    PositionView playerHypothetical = PositionView.from(player, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Bread);
-                    PositionView skeletonHypothetical = PositionView.from(enemy, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Person);
-                    PositionView hypothetical = skeletonHypothetical;
-
-                    double scoreForLocation = enemy.getBrain().getMaximumEstimateScore(hypothetical);
-
-                    bestScore = Math.max(bestScore, scoreForLocation);
-
-                    // Paint the expected score
-                    int rVal = (int) (255 * Math.max(0, Math.min(1, scoreForLocation/MAX_SCORE)));
-                    Color scoreColor = new Color(255-rVal, rVal, 0);
-                    innerGraphics.setColor(scoreColor);
-                    innerGraphics.fillArc(rx + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
-                            ry + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
-                            GameCanvas.INNER_TILE_SIZE, GameCanvas.INNER_TILE_SIZE, (centerAngle-45)%365, 90);
-
-                    // Label the unique states
-                    Random random = new Random();
-                    uniqueColorLabels.putIfAbsent(hypothetical, new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
-                    innerGraphics.setColor(uniqueColorLabels.get(hypothetical));
-                    innerGraphics.fillArc(rx + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/8,
-                            ry + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/8,
-                            GameCanvas.INNER_TILE_SIZE/4, GameCanvas.INNER_TILE_SIZE/4, (centerAngle-45)%365, 90);
+                PositionView hypothetical;
+                double scoreForLocation;
+                boolean checkPlayer = true;
+                if (checkPlayer) {
+                    hypothetical = PositionView.from(player, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Bread);
+                    scoreForLocation = player.getBrain().calculateMaximumScore(hypothetical);
+                } else {
+                    hypothetical = PositionView.from(enemy, board, point, possibleDir, RELATIVE_POSITION, obj -> obj instanceof Person);
+                    scoreForLocation = enemy.getBrain().calculateMaximumScore(hypothetical);
                 }
 
-                innerGraphics.setColor(Color.white);
-                innerGraphics.drawString(String.format("%.2f", bestScore), rx+2, ry+10);
-                innerGraphics.drawRect(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
+                bestScore = Math.max(bestScore, scoreForLocation);
 
-            } else {
-                boolean isVisited = player.hasVisited(point);
-                innerGraphics.setColor(isVisited ? Color.green : Color.gray);
+                // Paint the expected score
+                int rVal = (int) (255 * Math.max(0, Math.min(1, scoreForLocation/MAX_SCORE)));
+                Color scoreColor = new Color(255-rVal, rVal, 0);
+                innerGraphics.setColor(scoreColor);
+                innerGraphics.fillArc(rx + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
+                        ry + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/2,
+                        GameCanvas.INNER_TILE_SIZE, GameCanvas.INNER_TILE_SIZE, (centerAngle-45)%365, 90);
+
+                // Label the unique states
+                Random random = new Random();
+                uniqueColorLabels.putIfAbsent(hypothetical, new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
+                innerGraphics.setColor(uniqueColorLabels.get(hypothetical));
+                innerGraphics.fillArc(rx + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/8,
+                        ry + GameCanvas.TILE_SIZE/2 - GameCanvas.INNER_TILE_SIZE/8,
+                        GameCanvas.INNER_TILE_SIZE/4, GameCanvas.INNER_TILE_SIZE/4, (centerAngle-45)%365, 90);
             }
+
+            innerGraphics.setColor(Color.white);
+            innerGraphics.drawString(String.format("%.2f", bestScore), rx+2, ry+10);
+            innerGraphics.drawRect(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
 
             innerGraphics.setColor(Color.green);
             board.members(point).forEach(boardObj -> boardObj.render(innerGraphics, rx, ry));

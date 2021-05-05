@@ -113,10 +113,10 @@ public class PositionView implements BoardView {
             return false;
 
         PositionView other = (PositionView) obj;
-
-        if (this.currentTile == Sensed.FOOD && other.currentTile == FOOD) {
-            return true;
-        }
+//
+//        if (this.currentTile == Sensed.FOOD && other.currentTile == FOOD) {
+//            return true;
+//        }
 
         // Confirm map
         for (Direction dir : Direction.values()) {

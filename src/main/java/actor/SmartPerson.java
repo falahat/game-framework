@@ -1,7 +1,6 @@
 package actor;
 
 import actor.algorithms.MarkovDecisionProcess;
-import state.PositionView;
 import state.Direction;
 import state.GameStateView;
 import state.board.ReadableBoard;
@@ -29,7 +28,7 @@ public class SmartPerson extends Person {
         brain.learn(decided, firstState, nextState, immediateReward);
     }
 
-    public double getMaximumEstimateScore(PositionView state) {
-        return brain.getMaximumEstimateScore(state);
+    public MarkovDecisionProcess getBrain() {
+        return brain;
     }
 }

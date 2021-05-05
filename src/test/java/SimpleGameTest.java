@@ -1,6 +1,6 @@
-import actor.Person;
 import actor.Board2DActor;
 import actor.Skeleton;
+import actor.SmartPerson;
 import org.junit.jupiter.api.Test;
 import runner.PersonGameRunner;
 import state.Direction;
@@ -17,7 +17,7 @@ public class SimpleGameTest {
         GameBoard gameBoard = new GameBoard(10, 10);
 
         List<Board2DActor> actors = new ArrayList<>();
-        Person person = new Person(Direction.NORTH);
+        SmartPerson person = new SmartPerson(Direction.NORTH);
         Skeleton enemy = new Skeleton(Direction.NORTH, person);
 
         actors.add(person);
