@@ -66,7 +66,6 @@ public class PersonGameRunner implements GameRunner<ReadableBoard, WritableBoard
             innerGraphics.setColor(BACKGROUND);
             innerGraphics.fillRect(rx, ry, GameCanvas.TILE_SIZE, GameCanvas.TILE_SIZE);
 
-            boolean isScoring = true;
             // (255, 0, 0) => (0, 255, 0)
             Direction[] possibleDirections = new Direction[]{Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
             int[] angles = new int[]{90, 0, 270, 180};

@@ -103,13 +103,6 @@ public class GameBoard implements ReadableBoard, WritableBoard {
     }
 
     @Override
-    public List<Point2D> neighbors(Point2D center) {
-        assertLocationExists(center);
-
-        return new ArrayList<>(mapGraph.edges(center)); // TODO: do a last-second check to make sure they are not blocked?
-    }
-
-    @Override
     public Set<Point2D> locations() {
         return new HashSet<>(mapGraph.nodes());
     }

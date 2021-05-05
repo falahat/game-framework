@@ -8,12 +8,9 @@ import state.board.Bread;
 import state.board.GameBoard;
 import state.board.Rock;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -158,9 +155,6 @@ public class GameCanvas extends Canvas implements Runnable {
         game.start();
     }
 
-    public BufferedImage loadImage(String path) throws IOException {
-        return ImageIO.read(getClass().getResource(path));
-    }
 }
 
 

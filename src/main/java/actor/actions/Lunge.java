@@ -56,6 +56,6 @@ public class Lunge implements Action<ReadableBoard, WritableBoard> {
 
     @Override
     public Actor<ReadableBoard, WritableBoard> getActor() {
-        return null;
+        return predator;
     }
 }
